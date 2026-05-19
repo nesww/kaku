@@ -1,7 +1,8 @@
 #include "serial.h"
-#include "../../lib/core.h"
-#include "../../panic/panic.h"
-#include "../vga/vga.h"
+#include "lib/core.h"
+#include "panic/panic.h"
+#include "hw/vga/vga.h"
+#include "hw/io/io.h"
 #include <stdarg.h>
 #include <stdint.h>
 

@@ -1,8 +1,8 @@
 #ifndef KERNEL_PANIC_H
 #define KERNEL_PANIC_H
 
-#include "../hw/vga/vga.h"
-#include "../types.h"
+#include "hw/vga/vga.h"
+#include "types.h"
 
 #define PANIC_HLT() \
     __asm__ volatile("cli; hlt")

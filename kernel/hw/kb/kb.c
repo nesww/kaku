@@ -1,7 +1,6 @@
 #include "kb.h"
-#include "../vga/vga.h"
-#include "../io/io.h"
-#include "kb_scancode_set2.h"
+#include "hw/vga/vga.h"
+#include "hw/io/io.h"
 
 static char kb_map[128] = {
   [KB_SC_PRESSED_ONE]   =  '1',

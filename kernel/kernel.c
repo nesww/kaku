@@ -1,4 +1,5 @@
 /*hardware related includes */
+#include "disk/ata/ata.h"
 #include "hw/idt/idt.h"
 #include "hw/pic/pic.h"
 #include "hw/pit/pit.h"
@@ -9,8 +10,9 @@
 #include "alloc/alloc.h"
 #include "alloc/alloc.h"
 #include "frame/frame.h"
+#include "lib/core.h"
+#include "lib/stdmem.h"
 #include "paging/paging.h"
-#include "proc/proc.h"
 #include "proc/sched.h"
 
 /* libs includes */
@@ -20,40 +22,37 @@
 #define SOS_VER_MINOR 0
 #define SOS_VER_PATCH 1
 
-static void __kernel_init(void) {
+static void __hw_init(void) {
     serial_init();
     vga_clear();
     vga_enable_cursor();
     pic_init();
     pit_init();
     idt_init();
+}
+
+static void __kernel_init(void) {
     kheap_init();
     fa_init();
     paging_kernel_init();
     scheduler_init();
     INTERRUPTS_ENABLE();
 
+    //replace for journal when available
     vga_printf("sOS - v%d.%d.%d\n", SOS_VER_MAJOR, SOS_VER_MINOR, SOS_VER_PATCH);
     vga_printf("kernel started successfully!\n");
 }
 
-//see proc/sched.c for usage
-extern volatile uint32_t proc1_counter;
-extern volatile uint32_t proc2_counter;
-
-void __proc1(void) { serial_printf("proc1 started\n"); while(1) proc1_counter++; }
-void __proc2(void) { serial_printf("proc2 started\n"); while(1) proc2_counter++; }
-
-
 void kernel_main(void) {
+    __hw_init();
     __kernel_init();
 
-    proc *p_proc1 = proc_create(__proc1);
-    proc *p_proc2 = proc_create(__proc2);
+    uint16_t *buf = kmalloc(KB(1));
 
-    scheduler_add_proc(p_proc1);
-    scheduler_add_proc(p_proc2);
-
-
+    serial_printf("Bootloader read from disk :) :\n");
+    ata_read(0, 1, buf);
+    for (uint32_t i = 0; i < 256; ++i) {
+        serial_printf(" %x%s", buf[i], ((i+1)%5 == 0 ? "\n": ""));
+    }
     while(1);
 }

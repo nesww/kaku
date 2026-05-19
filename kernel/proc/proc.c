@@ -1,6 +1,6 @@
 #include "proc.h"
-#include "../lib/stdmem.h"
-#include "../frame/frame.h"
+#include "lib/stdmem.h"
+#include "frame/frame.h"
 
 static uint32_t pid_counter = 1;
 

@@ -1,7 +1,7 @@
 #ifndef ALLOC_H
 #define ALLOC_H
 
-#include "../lib/core.h"
+#include "lib/core.h"
 #include <stdint.h>
 
 #define ALLOC_MIN_BYTES_BLOCK 16

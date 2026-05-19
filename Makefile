@@ -2,7 +2,7 @@ ASM = nasm
 CC = i686-elf-gcc
 LD = i686-elf-ld
 
-CFLAGS = -ffreestanding -nostdlib -mgeneral-regs-only -I/usr/lib/gcc/i686-elf/15.2.0/include
+CFLAGS = -ffreestanding -nostdlib -mgeneral-regs-only -I/usr/lib/gcc/i686-elf/15.2.0/include -Ikernel
 LDFLAGS = -T kernel/kernel.ld --oformat binary
 
 KERNEL_SRCS = $(shell find kernel -mindepth 2 -name '*.c')

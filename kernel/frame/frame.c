@@ -1,9 +1,8 @@
 #include "frame.h"
-#include "../mem/mem.h"
-#include "../panic/panic.h"
-#include "../lib/stdmem.h"
-#include "../lib/core.h"
-#include <stdint.h>
+#include "mem/mem.h"
+#include "panic/panic.h"
+#include "lib/stdmem.h"
+#include "lib/core.h"
 
 static uint8_t *fa_bitmap;
 static uint32_t fa_bitmap_size = 0;

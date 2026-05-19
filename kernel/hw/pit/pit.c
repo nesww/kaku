@@ -1,7 +1,7 @@
 #include "pit.h"
 
-#include "../io/io.h"
-#include "../serial/serial.h"
+#include "hw/io/io.h"
+#include "hw/serial/serial.h"
 
 void pit_init(void) {
     outb(PIT_CMD_PORT, 0x36);

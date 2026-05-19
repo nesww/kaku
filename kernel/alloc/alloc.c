@@ -1,8 +1,7 @@
 #include "alloc.h"
 
-#include "../lib/core.h"
-#include "../panic/panic.h"
-#include "../mem/mem.h"
+#include "panic/panic.h"
+#include "mem/mem.h"
 
 #include <stdint.h>
 

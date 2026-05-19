@@ -2,7 +2,7 @@
 #define PIC_H
 
 #include <stdint.h>
-#include "../io/io.h"
+#include "hw/io/io.h"
 
 #define PIC_INT_OFFSET 32 /* offset for interruptions */
 

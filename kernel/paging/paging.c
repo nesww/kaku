@@ -1,9 +1,8 @@
 #include "paging.h"
-#include "../frame/frame.h"
-#include "../panic/panic.h"
-#include "../mem/mem.h"
-#include "../lib/core.h"
-#include <stdint.h>
+#include "frame/frame.h"
+#include "panic/panic.h"
+#include "mem/mem.h"
+#include "lib/core.h"
 
 static page_directory *kernel_pd;
 static uint8_t paging_initialized = FALSE;

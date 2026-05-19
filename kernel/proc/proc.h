@@ -1,7 +1,7 @@
 #ifndef PROC_H
 #define PROC_H
 
-#include "../paging/paging.h"
+#include "paging/paging.h"
 
 #define PROC_USER_STACK_TOP_VADDR 0x8000000
 #define PROC_USER_FLAGS 0x7 // present | writable | user

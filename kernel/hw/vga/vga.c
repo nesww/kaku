@@ -1,8 +1,5 @@
 #include "vga.h"
-#include "../io/io.h"
-#include "../idt/idt.h"
-#include <stdarg.h>
-#include <stdint.h>
+#include "hw/io/io.h"
 
 static char *vga_buffer = (char *)VGA_ADDRESS;
 static uint32_t vga_cursor = 0;

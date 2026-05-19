@@ -18,6 +18,7 @@ Now:
 - [proc.h](kernel/proc/proc.h): processes functionning with a basic entry function with no args neither return value (see [kernel/kernel.c](kernel/kernel.c))
 - [serial.h](kernel/hw/serial/serial.h): serial output available for writing on stdio with QEMU, mostly for debugging purposes
 - [sched.h](kernel/proc/sched.h): basic round robin process scheduler
+- [ata.h](kernel/disk/ata/ata.h): simple ATA PIO driver (primary disk only) to read and write on disk
 
 Coming:
 - Kernel internal logging system for infos & debugging, to be extracted from the VM

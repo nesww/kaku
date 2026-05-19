@@ -2,7 +2,7 @@
 #define IDT_H
 
 #include <stdint.h>
-#include "../../types.h"
+#include "types.h"
 
 #define IDT_TAB_SIZE 256
 

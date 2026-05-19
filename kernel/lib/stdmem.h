@@ -1,9 +1,7 @@
 #ifndef KCORE_MEM
 #define KCORE_MEM
 
-#include "core.h"
-#include "../alloc/alloc.h"
-
+#include "alloc/alloc.h"
 
 static inline void *kmemcpy(void *dst, const void *src, uint32_t n) {
     uint8_t *d = (uint8_t*)dst;

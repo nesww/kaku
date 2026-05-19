@@ -1,10 +1,9 @@
 #include "idt.h"
 #include <stdint.h>
-#include "../vga/vga.h"
-#include "../serial/serial.h"
-#include "../pic/pic.h"
-#include "../../panic/panic.h"
-#include "../kb/kb.h"
+#include "hw/vga/vga.h"
+#include "hw/pic/pic.h"
+#include "panic/panic.h"
+#include "hw/kb/kb.h"
 #include "idt_declare.h"
 static idt_entry idt[IDT_TAB_SIZE];
 
