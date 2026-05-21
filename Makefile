@@ -39,9 +39,11 @@ kernel/%.o: kernel/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILDS)/disk.img: kernel/kernel.bin bootloader/bootloader.bin
-	dd if=/dev/zero of=$@ bs=512 count=20
+	dd if=/dev/zero of=$@ bs=512 count=131072
 	dd if=bootloader/bootloader.bin of=$@ conv=notrunc
 	dd if=kernel/kernel.bin of=$@ bs=512 seek=1 conv=notrunc
+	echo '2048,,' | sfdisk --label dos $(BUILDS)/disk.img
+	mkfs.ext2 -E offset=$$((2048 * 512)) $(BUILDS)/disk.img
 
 clean:
 	rm -f bootloader/bootloader.bin kernel/kernel_entry.o kernel/kernel.o kernel/kernel.bin $(KERNEL_BIN_DEPS) $(BUILDS)/disk.img

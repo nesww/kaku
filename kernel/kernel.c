@@ -1,5 +1,6 @@
 /*hardware related includes */
-#include "disk/ata/ata.h"
+#include "fs/ext2/ext2.h"
+#include "fs/ext2/inode/inode.h"
 #include "hw/idt/idt.h"
 #include "hw/pic/pic.h"
 #include "hw/pit/pit.h"
@@ -10,13 +11,11 @@
 #include "alloc/alloc.h"
 #include "alloc/alloc.h"
 #include "frame/frame.h"
-#include "lib/core.h"
-#include "lib/stdmem.h"
 #include "paging/paging.h"
 #include "proc/sched.h"
 
 /* libs includes */
-#include <stdint.h>
+// #include <stdint.h>
 
 #define SOS_VER_MAJOR 0
 #define SOS_VER_MINOR 0
@@ -31,10 +30,16 @@ static void __hw_init(void) {
     idt_init();
 }
 
+static void __fs_init(void) {
+    fs_ext2_read_superblock();
+    fs_ext2_read_bgdt();
+}
+
 static void __kernel_init(void) {
     kheap_init();
     fa_init();
     paging_kernel_init();
+    __fs_init();
     scheduler_init();
     INTERRUPTS_ENABLE();
 
@@ -47,12 +52,14 @@ void kernel_main(void) {
     __hw_init();
     __kernel_init();
 
-    uint16_t *buf = kmalloc(KB(1));
+    const fs_ext2_superblock *sb = fs_ext2_get_superblock();
+    serial_printf("EXT2: superblock has_extended: %x\n", sb->sb_has_extended);
 
-    serial_printf("Bootloader read from disk :) :\n");
-    ata_read(0, 1, buf);
-    for (uint32_t i = 0; i < 256; ++i) {
-        serial_printf(" %x%s", buf[i], ((i+1)%5 == 0 ? "\n": ""));
-    }
+    const fs_ext2_descriptor *bgdt = fs_ext2_get_bgdt();
+    serial_printf("dsc_unallocated_inodes_count_in_group: %x\n", bgdt[0].dsc_unallocated_inodes_count_in_group);
+
+    fs_ext2_inode root = fs_ext2_read_inode(2);
+    serial_printf("root inode size_low_bits: %x\n", root.inode_size_low_bits);
+
     while(1);
 }

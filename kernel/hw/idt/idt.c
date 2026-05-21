@@ -63,17 +63,17 @@ void isr_handler(int num, struct interrupt_frame *frame) {
             case INT_PIC_KEYBOARD:
                 kb_handle_interrupt();
                 break;
-            case INT_PIC_SERIAL_COM2:       vga_print("INT_PIC: serial COM2");         break;
-            case INT_PIC_SERIAL_COM1:       vga_print("INT_PIC: serial COM1");         break;
-            case INT_PIC_PARALLEL_PORT:     vga_print("INT_PIC: parallel port");       break;
-            case INT_PIC_FLOPPY:            vga_print("INT_PIC: floppy");              break;
-            case INT_PIC_PARALLEL_PORT2:    vga_print("INT_PIC: parallel port 2");     break;
+            case INT_PIC_SERIAL_COM2:       vga_println("INT_PIC: serial COM2");         break;
+            case INT_PIC_SERIAL_COM1:       vga_println("INT_PIC: serial COM1");         break;
+            case INT_PIC_PARALLEL_PORT:     vga_println("INT_PIC: parallel port");       break;
+            case INT_PIC_FLOPPY:            vga_println("INT_PIC: floppy");              break;
+            case INT_PIC_PARALLEL_PORT2:    vga_println("INT_PIC: parallel port 2");     break;
             // PIC slave IRQs
-            case INT_PIC_REALTIME_CLOCK:    vga_print("INT_PIC: realtime clock");      break;
-            case INT_PIC_PS2:               vga_print("INT_PIC: PS/2");                break;
-            case INT_PIC_FLOAT_COPROCESSOR: vga_print("INT_PIC: float coprocessor");   break;
-            case INT_PIC_ATA_PRIMARY:       vga_print("INT_PIC: ATA primary disk");    break;
-            case INT_PIC_ATA_SECONDARY:     vga_print("INT_PIC: ATA secondary disk");  break;
+            case INT_PIC_REALTIME_CLOCK:    vga_println("INT_PIC: realtime clock");      break;
+            case INT_PIC_PS2:               vga_println("INT_PIC: PS/2");                break;
+            case INT_PIC_FLOAT_COPROCESSOR: vga_println("INT_PIC: float coprocessor");   break;
+            case INT_PIC_ATA_PRIMARY:       vga_println("INT_PIC: ATA primary disk");    break;
+            case INT_PIC_ATA_SECONDARY:     vga_println("INT_PIC: ATA secondary disk");  break;
             default:
                 vga_printf("INT_PIC: unknown exception or not handled: %d\n", num);
                 break;

@@ -75,6 +75,6 @@ void fs_ext2_read_superblock(void);
 const fs_ext2_superblock *fs_ext2_get_superblock(void);
 
 void fs_ext2_read_bgdt(void);
-const fs_ext2_descriptor **fs_ext2_get_bgdt(void);
+const fs_ext2_descriptor *fs_ext2_get_bgdt(void);
 fs_ext2_inode fs_ext2_read_inode(uint32_t id);
 #endif //FS_EXT2_H

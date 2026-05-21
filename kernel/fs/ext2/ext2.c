@@ -20,7 +20,7 @@ void fs_ext2_read_superblock(void) {
     ata_read(FS_MBR_LBA, 1, buf_mbr);
 
     //get the LBA of the ext2 superblock from MBR at offset 0x1be
-    __fs_ext2_lba_root = *(uint32_t*)((uint8_t*)buf_mbr + 0x1be);
+    __fs_ext2_lba_root = *(uint32_t*)((uint8_t*)buf_mbr + 0x1be + 8);
     uint32_t lba_ext2_sb = __fs_ext2_lba_root + 2;
     kfree(buf_mbr);
 
@@ -67,15 +67,15 @@ void fs_ext2_read_bgdt(void) {
     kfree(buf_bgdt);
 }
 
-const fs_ext2_descriptor **fs_ext2_get_bgdt(void) {
-    return &fs_ext2_bgdt;
+const fs_ext2_descriptor *fs_ext2_get_bgdt(void) {
+    return fs_ext2_bgdt;
 }
 
 void __fs_ext2_allread(const char *func_name) {
     if (!__fs_ext2_sb_read)
-        kernel_panicf("%s: could not do operation, superblock was not read\n");
+        kernel_panicf("%s: could not do operation, superblock was not read\n", func_name);
     if (!__fs_ext2_bgdt_read)
-        kernel_panicf("%s: could not do operation, BGDT was not read\n");
+        kernel_panicf("%s: could not do operation, BGDT was not read\n", func_name);
 }
 
 fs_ext2_inode fs_ext2_read_inode(uint32_t inode_id) {
@@ -91,7 +91,9 @@ fs_ext2_inode fs_ext2_read_inode(uint32_t inode_id) {
     uint16_t *buf_inode = kmalloc(sizeof(fs_ext2_inode));
 
     ata_read(inode_lba, CEIL_DIV(sizeof(fs_ext2_inode), ATA_SECTOR_SIZE), buf_inode);
-    fs_ext2_inode inode = *(fs_ext2_inode*)buf_inode;
+
+    uint32_t offset_in_block = (inode_index * fs_ext2_sb.extended.sbx_inode_size) % __fs_ext2_block_size;
+    fs_ext2_inode inode = *(fs_ext2_inode*)(buf_inode + offset_in_block);
 
     kfree(buf_inode);
     return inode;
