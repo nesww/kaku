@@ -1,4 +1,4 @@
-# SOS - kernel - v0.0.1
+# SOS - kernel - v0.0.2
 
 Basic bootloader & kernel (x86 32bit)
 
@@ -19,6 +19,7 @@ Now:
 - [serial.h](kernel/hw/serial/serial.h): serial output available for writing on stdio with QEMU, mostly for debugging purposes
 - [sched.h](kernel/proc/sched.h): basic round robin process scheduler
 - [ata.h](kernel/disk/ata/ata.h): simple ATA PIO driver (primary disk only) to read and write on disk
+- [ext2.h](kernel/fs/ext2/ext2.h): start of `ext2fs` implementation (for now, only reading, no path resolving (like `/foo/bar`)) 
 
 Coming:
 - Kernel internal logging system for infos & debugging, to be extracted from the VM
