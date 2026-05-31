@@ -36,7 +36,6 @@ void vga_puthex(uint8_t num);
 void vga_puthex32(uint32_t num);
 void vga_printf(const char *str, ...);
 void vga_vprintf(const char *str, va_list args);
-void vga_vprintf_to(void (*putchar_fn)(char), void(*newline_fn)(void), const char *str, va_list args);
 void vga_backspace(void);
 
 /* only 4 first bits will be used, */

@@ -1,7 +1,7 @@
 #include "serial.h"
 #include "lib/core.h"
 #include "panic/panic.h"
-#include "hw/vga/vga.h"
+#include "lib/print.h"
 #include "hw/io/io.h"
 #include <stdarg.h>
 #include <stdint.h>
@@ -32,6 +32,6 @@ static void __serial_newline(void) {
 void serial_printf(const char *str, ...) {
     va_list args;
     va_start(args, str);
-    vga_vprintf_to(serial_putchar, __serial_newline, str, args);
+    kvprintf_to(serial_putchar, __serial_newline, str, args);
     va_end(args);
 }
