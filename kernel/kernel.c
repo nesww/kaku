@@ -17,6 +17,7 @@
 #include <stdint.h>
 
 /* libs includes */
+#include "fonts/default8x16.h"
 // #include <stdint.h>
 
 #define SOS_VER_MAJOR 0
@@ -63,50 +64,32 @@ void kernel_main(void) {
 
     SERIAL_KERNEL("everything initialized, kernel running\n\n");
 
-    fs_ext2_inode root = fs_ext2_read_inode(2);
-    SERIAL_KERNEL("root direct_ptr0: %x\n", root.inode_direct_blk_ptr0);
+    vesa_init();
 
+    uint32_t *vesa_fb = vesa_get_fb();
 
+    SERIAL_KERNEL("VESA address after init: %x\n", vesa_fb);
 
-    fs_ext2_inode toto = fs_ext2_resolve_path("/toto.txt");
-    SERIAL_KERNEL("is toto inode a file ? %x\n", fs_ext2_is_inode_file(&toto));
+    for (int x = 0; x < 1024; x++) {
+        vesa_fb[x] = 0x00FF0000;
+    }
 
-    fs_ext2_inode grub_dir = fs_ext2_resolve_path("/etc/grub");
-    SERIAL_KERNEL("is grub_dir inode a dir ? %x\n", fs_ext2_is_inode_dir(&grub_dir));
+    vesa_putchar('o', 200, 200, 0x00FFFFFF, 0x0);
 
-    fs_ext2_inode config = fs_ext2_resolve_path("/config");
+SERIAL_INFO("pitch: %x\n", *(uint16_t*)0x7E10);
 
+    uint8_t *g = default8x16_psf + 6 + ('A' * 16);
+    SERIAL_INFO("glyph A: %x %x %x %x\n", g[0], g[1], g[2], g[3]);
 
+    SERIAL_INFO("bytes 0-7: %x %x %x %x %x %x %x %x\n",
+        default8x16_psf[0], default8x16_psf[1],
+        default8x16_psf[2], default8x16_psf[3],
+        default8x16_psf[4], default8x16_psf[5],
+        default8x16_psf[6], default8x16_psf[7]);
+    SERIAL_INFO("byte 1044: %x\n", default8x16_psf[1044]);
 
-    uint8_t *buf_config = kmalloc(KB(10));
-    fs_ext2_read_file_contents(&config, buf_config, KB(10));
-    SERIAL_KERNEL("after reading file contents\n");
-    SERIAL_KERNEL("low_size_bits: %x\n", config.inode_size_low_bits);
-    SERIAL_INFO("config.inode_direct_blk_ptr0: %x\n", config.inode_direct_blk_ptr0);
-    buf_config[config.inode_size_low_bits] = '\0';
-
-    SERIAL_INFO("buf[0..3]: %x %x %x %x\n", buf_config[0], buf_config[1], buf_config[2], buf_config[3]);
-
-    SERIAL_KERNEL("following, raw buffer read from file via fs:\n");
-    serial_printf("%s", buf_config);
-
-    uint8_t *new_content = (uint8_t*)"hello from kernel!\n";
-    fs_ext2_create_file("/newfile.txt", new_content, 19);
-    fs_ext2_inode newfile = fs_ext2_resolve_path("/newfile.txt");
-
-    uint8_t *buf_new = kmalloc(256);
-    fs_ext2_read_file_contents(&newfile, buf_new, 256);
-    buf_new[newfile.inode_size_low_bits] = '\0';
-    serial_printf("%s\n", buf_new);
-
-
-    fs_ext2_inode config2 = fs_ext2_resolve_path("/config");
-
-    uint8_t *new_content_config = (uint8_t*)"modified by kernel fs!\n";
-    fs_ext2_write_file(&config2, new_content_config, kstrlen((const char*)new_content_config));
-    uint8_t *buf_config_modified = kmalloc(256);
-    fs_ext2_read_file_contents(&config2, buf_config_modified, 256);
-    buf_config_modified[config2.inode_size_low_bits] = '\0';
-    serial_printf("%s\n", buf_config_modified);
+    for (int i = 1040; i < 1060; i++) {
+        SERIAL_INFO("psf[%x]: %x\n", i, default8x16_psf[i]);
+    }
     while(1);
 }

@@ -67,7 +67,7 @@ clean:
 	rm -f bootloader/bootloader.bin kernel/kernel_entry.o kernel/kernel.o kernel/kernel.bin $(KERNEL_BIN_DEPS) $(BUILDS)/disk.img
 
 run: $(BUILDS)/disk.img fill-disk
-	qemu-system-i386 -drive format=raw,file=$< -display sdl -serial stdio
+	qemu-system-i386 -drive format=raw,file=$< -display gtk,zoom-to-fit=off -serial stdio
 
 run-debug-int: $(BUILDS)/disk.img
 	qemu-system-i386 -drive format=raw,file=$< -display sdl -serial stdio -d int

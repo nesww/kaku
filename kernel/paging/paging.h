@@ -32,6 +32,7 @@ typedef struct {
 } page_table;
 
 page_directory *paging_kernel_init(void);
+const page_directory *paging_get_kernel_pd(void);
 
 void paging_map(page_directory *pd, uint32_t paddr, uint32_t vaddr, uint8_t flags);
 page_directory *paging_create_pd(void);

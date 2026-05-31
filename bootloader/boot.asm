@@ -16,6 +16,7 @@ section .text
   sti
   call disk_load
   call memory_map
+  call vesa_init
   call enter_pm
   hlt
 
@@ -58,6 +59,22 @@ memory_map:
     jz .done
     jmp .memory_map_start
 .done:
+    ret
+
+vesa_init:
+    mov ax, 0x4f02
+    mov bx, 0x4144
+    or bx, 0x4000
+    int 0x10
+
+    mov ax, 0x4f01
+    mov cx, 0x4144
+    mov di, 0x7e00
+    xor bx, bx
+    mov es, bx
+    int 0x10
+    mov eax, [0x7e00 + 0x28]
+    mov [0x600], eax
     ret
 
 ; enter in protected mode (32 bits)

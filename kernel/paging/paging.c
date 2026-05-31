@@ -23,6 +23,11 @@ page_directory *paging_kernel_init(void) {
     PAGING_ENABLE();
 }
 
+const page_directory *paging_get_kernel_pd(void) {
+    if (!paging_initialized) kernel_panic("PAGING_NOT_INITIALIZED: tried getting kernel page directory without kernel paging initialized");
+    return kernel_pd;
+}
+
 void paging_map(page_directory *pd, uint32_t paddr, uint32_t vaddr, uint8_t flags) {
     if (!paging_initialized) kernel_panic("PAGING_NOT_INITIALIZED: tried mapping to a page directory without initializing kernel paging");
 
