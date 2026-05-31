@@ -1,5 +1,5 @@
-#ifndef KCORE_H
-#define KCORE_H
+#ifndef STDCORE_H
+#define STDCORE_H
 
 #define TRUE 1
 #define FALSE 0
@@ -16,4 +16,4 @@
             vga_printf("TODO: " #str "\n"); \
     } while(0)                              \
 
-#endif //K_CORE_H
+#endif //STDCORE_H

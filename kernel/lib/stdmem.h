@@ -1,5 +1,5 @@
-#ifndef KCORE_MEM
-#define KCORE_MEM
+#ifndef STDMEM_H
+#define STDMEM_H
 
 #include "alloc/alloc.h"
 
@@ -25,4 +25,4 @@ static inline void *krealloc(void* ptr, uint32_t old_size, uint32_t new_size) {
     return new_ptr;
 }
 
-#endif //KCORE_MEM
+#endif //STDMEM_H
