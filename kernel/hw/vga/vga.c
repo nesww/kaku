@@ -1,54 +1,12 @@
 #include "vga.h"
 #include "hw/io/io.h"
 #include "lib/print.h"
-#include "paging/paging.h"
-#include "fonts/default8x16.h"
 #include <stdarg.h>
 
 static char *vga_buffer = (char *)VGA_ADDRESS;
 static uint32_t vga_cursor = 0;
 static uint8_t vga_color = 0x0f; // default to white on black
 
-static uint32_t *vesa_framebuffer;
-static uint16_t vesa_pitch;
-#define VESA_WIDTH  1920
-#define VESA_HEIGHT 1080
-#define VESA_COLOR_CHANNELS 4
-
-void vesa_init(void) {
-    vesa_framebuffer = *(uint32_t**)VGA_VESA_FB_ADDR;
-    vesa_pitch = *(uint16_t*)0x7e10 / 4;
-    const page_directory *kpd = paging_get_kernel_pd();
-    uint32_t fb_size = VESA_WIDTH * VESA_HEIGHT * VESA_COLOR_CHANNELS;
-    for (uint32_t offset = 0; offset < fb_size; offset+=4096) {
-        paging_map((page_directory*)kpd, (uint32_t)vesa_framebuffer + offset, (uint32_t)vesa_framebuffer + offset, PAGING_PD_ENTRY_FLAGS_KERNEL_ONLY);
-    }
-}
-
-uint32_t *vesa_get_fb() {
-    return vesa_framebuffer;
-}
-
-void vesa_putchar(char c, uint32_t x, uint32_t y, vesa_char_fg color, vesa_char_bg bg) {
-    uint8_t *glyph = default8x16_psf + 6 + (c * 16);
-    for (uint32_t row = 0; row < 16; row++) {
-        for (uint32_t col = 0; col < 8; col++) {
-            if (glyph[row] & (0x80 >> col)) {
-                vesa_framebuffer[(y + row) * vesa_pitch + (x + col)] = color;
-            } else {
-                vesa_framebuffer[(y + row) * vesa_pitch + (x + col)] = bg;
-            }
-        }
-    }
-}
-
-//TODO
-// void vesa_printf(const char *str, ...) {
-//     if (!str) return;
-//     va_list args;
-//     va_start(args, str);
-//     kvprintf_to(vesa_putchar, 0, str, args);
-// }
 
 static void __vga_update_cursor(void) {
     uint16_t pos = vga_cursor;

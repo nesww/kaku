@@ -1,8 +1,8 @@
-# SOS - kernel - v0.0.3
+# kaku - kernel - v0.0.3
 
 Basic bootloader & kernel (x86 32bit)
 
-<img src="./assets/kernel_panic.png" alt="sos_kernel_panic" width=250/>
+<img src="./assets/kaku_name.png" alt="kaku_logo" width=250/>
  
 ***
  

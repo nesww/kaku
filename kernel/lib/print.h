@@ -38,6 +38,10 @@ static inline void kvprintf_to(void (*putchar_fn)(char), void(*newline_fn)(void)
             }
         } else if (c == '\n') {
             newline_fn();
+        } else if (c == '\t') {
+            for (uint32_t i = 0; i < 4; ++i) {
+                putchar_fn(' ');
+            }
         } else {
             putchar_fn(c);
         }

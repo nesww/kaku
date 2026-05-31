@@ -8,15 +8,6 @@
 #define VGA_COLS    80
 #define VGA_ROWS    25
 
-#define VGA_VESA_FB_ADDR 0x600
-
-typedef uint32_t vesa_char_fg;
-typedef uint32_t vesa_char_bg;
-
-void vesa_init(void);
-uint32_t *vesa_get_fb(void);
-void vesa_putchar(char c, uint32_t x, uint32_t y, vesa_char_fg color, vesa_char_bg bg);
-
 #define VGA_BLACK         0x0
 #define VGA_BLUE          0x1
 #define VGA_GREEN         0x2

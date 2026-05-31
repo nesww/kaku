@@ -12,7 +12,7 @@
 #define SERIAL_ERROR(str, ...) \
     serial_printf("[%s] <error>: " str, __func__, ##__VA_ARGS__);
 #define SERIAL_KERNEL(str, ...) \
-    serial_printf("[%s] <kernel>: " str, __func__, ##__VA_ARGS__);
+    serial_printf("<kernel>: " str, ##__VA_ARGS__);
 #define SERIAL_PANIC(str, ...) \
     serial_printf("\n!!!!!!!!\n<PANIC>\n!!!!!!!!\n" str, ##__VA_ARGS__);
 
