@@ -19,7 +19,7 @@ void kheap_init() {
     kernel_heap.free_blocks[ALLOC_ORDERS - 1] = initial;
     kernel_heap.heap_start = &kernel_end;
     mmap_entry usable_entry = mmap_get_usable_entry();
-    kernel_heap.heap_size = KMIN(usable_entry.base_addr + usable_entry.region_len - (uint32_t)(kernel_heap.heap_start), MB(4));
+    kernel_heap.heap_size = KMIN(usable_entry.base_addr + usable_entry.region_len - (uint32_t)(kernel_heap.heap_start), MB(32));
     heap_initialized = TRUE;
 }
 

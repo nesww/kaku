@@ -45,7 +45,7 @@ int ata_identify(uint16_t *buf) {
     return 0;
 }
 
-void ata_read(uint32_t lba, uint8_t count, uint16_t *buf) {
+void ata_read(uint32_t lba, uint8_t sectors_count, uint16_t *buf) {
     if (!buf) {
         return;
     }
@@ -56,7 +56,7 @@ void ata_read(uint32_t lba, uint8_t count, uint16_t *buf) {
     uint8_t lba_mid  = (uint8_t)(lba >> 8);
     uint8_t lba_high = (uint8_t)(lba >> 16);
 
-    outb(ATA_PRIMARY_SECTOR_COUNT_REGISTER_RW, count);
+    outb(ATA_PRIMARY_SECTOR_COUNT_REGISTER_RW, sectors_count);
     outb(ATA_PRIMARY_LBA_LOW_REGISTER_RW, lba_low);
     outb(ATA_PRIMARY_LBA_MID_REGISTER_RW, lba_mid);
     outb(ATA_PRIMARY_LBA_HIGH_REGISTER_RW, lba_high);
@@ -65,10 +65,10 @@ void ata_read(uint32_t lba, uint8_t count, uint16_t *buf) {
     outb(ATA_PRIMARY_COMMAND_REGISTER_W, 0x20); //READ_SECTORS command
 
     uint32_t word_count = 0;
-    for (uint32_t i = 0; i < count; ++i) {
+    for (uint32_t i = 0; i < sectors_count; ++i) {
         int drq_done = ata_wait_drq();
         if (!drq_done) {
-            serial_printf("%s: failed for lba: %x, %d sectors, with ata_error: %x\n", __func__, lba, (uint32_t)count, ata_get_error());
+            serial_printf("%s: failed for lba: %x, %d sectors, with ata_error: %x\n", __func__, lba, (uint32_t)sectors_count, ata_get_error());
             return;
         }
         for (uint32_t j = 0; j < 256; ++j) {

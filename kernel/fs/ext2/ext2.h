@@ -2,10 +2,12 @@
 #define FS_EXT2_H
 
 #include "inode/inode.h"
+#include "lib/dynarray.h"
 #include <stdint.h>
 
 #define FS_MBR_LBA 0
 #define FS_EXT2_SIGNATURE 0xef53
+
 
 typedef struct {
     uint32_t sb_inodes_count;
@@ -71,10 +73,38 @@ typedef struct {
     uint8_t __dsc_padding[14];
 } fs_ext2_descriptor;
 
+
+/* initialization of fs */
+
 void fs_ext2_read_superblock(void);
 const fs_ext2_superblock *fs_ext2_get_superblock(void);
 
 void fs_ext2_read_bgdt(void);
 const fs_ext2_descriptor *fs_ext2_get_bgdt(void);
 fs_ext2_inode fs_ext2_read_inode(uint32_t id);
+
+/////////
+/* reading in the fs */
+
+dynarray *fs_ext2_list_dir(fs_ext2_inode *inode);
+fs_ext2_inode fs_ext2_resolve_path(const char* path);
+uint32_t __fs_ext2_find_in_dir(fs_ext2_inode *dir, const char *name);
+
+static inline uint8_t fs_ext2_is_inode_dir(fs_ext2_inode *inode) {
+    return (inode->inode_type_and_permissions & 0xf000) == FS_EXT2_INODE_FTYPE_DIR;
+}
+
+static inline uint8_t fs_ext2_is_inode_file(fs_ext2_inode *inode) {
+    return (inode->inode_type_and_permissions & 0xf000) == FS_EXT2_INODE_FTYPE_FILE;
+}
+
+void fs_ext2_read_file_contents(fs_ext2_inode *inode, uint8_t *buf, uint32_t size);
+
+/* writing in the fs */
+
+uint32_t fs_ext2_alloc_block(uint32_t preferred_group);
+uint32_t fs_ext2_alloc_inode(uint32_t preferred_group);
+
+void fs_ext2_write_file(fs_ext2_inode *inode, uint8_t *buf, uint32_t size);
+void fs_ext2_create_file(const char *path, uint8_t *buf, uint32_t size);
 #endif //FS_EXT2_H

@@ -41,4 +41,21 @@ static inline void *dynarray_get(dynarray *da, uint32_t index) {
     return ((void**)da->data)[index];
 }
 
+static inline void dynarray_free(dynarray *da) {
+    if(!da)
+        return;
+    kfree(da->data);
+    kfree(da);
+}
+
+static inline void dynarray_free_deep(dynarray *da, void(*free_callback)(void*)) {
+    if (!da)
+        return;
+
+    for (uint32_t i = 0; i < da->count; ++i) {
+        free_callback(((void**)da->data)[i]);
+    }
+    dynarray_free(da);
+}
+
 #endif //DYNARRAY_H

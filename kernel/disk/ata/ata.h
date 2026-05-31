@@ -49,7 +49,7 @@ void ata_wait_bsy(void);
 int ata_wait_drq(void);
 uint8_t ata_get_error(void);
 int ata_identify(uint16_t *buf);
-void ata_read(uint32_t lba, uint8_t count, uint16_t *buf); // 16 bits for buf since data port for ATA PIO is limited to 2 bytes per read from sector in drive buffer
+void ata_read(uint32_t lba, uint8_t sectors_count, uint16_t *buf); // 16 bits for buf since data port for ATA PIO is limited to 2 bytes per read from sector in drive buffer
 void ata_write(uint32_t lba, uint8_t count, uint16_t *buf);
 
 #endif //ATA_DISK_H

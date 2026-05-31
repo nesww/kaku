@@ -16,7 +16,6 @@ void serial_init(void) {
     outb(SERIAL_BASE + 3, 0x03); //8 bits, no parity, 1 stop bit
     outb(SERIAL_BASE + 2, 0xC7); //enable fifo
     serial_initialized = TRUE;
-    serial_printf("serial initialized\n");
 }
 
 void serial_putchar(char c) {

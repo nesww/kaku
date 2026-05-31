@@ -3,7 +3,7 @@ CC = i686-elf-gcc
 LD = i686-elf-ld
 
 CFLAGS = -ffreestanding -nostdlib -mgeneral-regs-only -I/usr/lib/gcc/i686-elf/15.2.0/include -Ikernel
-LDFLAGS = -T kernel/kernel.ld --oformat binary
+LDFLAGS = -T kernel/kernel.ld --oformat binary -Map kernel/kernel.map
 
 KERNEL_SRCS = $(shell find kernel -mindepth 2 -name '*.c')
 KERNEL_BIN_DEPS = $(KERNEL_SRCS:.c=.o) kernel/hw/pit/pit_asm.o
@@ -45,10 +45,28 @@ $(BUILDS)/disk.img: kernel/kernel.bin bootloader/bootloader.bin
 	echo '2048,,' | sfdisk --label dos $(BUILDS)/disk.img
 	mkfs.ext2 -E offset=$$((2048 * 512)) $(BUILDS)/disk.img
 
+fill-disk:
+	sudo mount -o loop,offset=$$((2048*512)) build/disk.img /mnt
+	printf "noption=1\ngreet=1\n\0" | sudo tee /mnt/config
+	sudo touch /mnt/toto.txt
+	printf "baba\nbibi\0" | sudo tee /mnt/toto.txt
+	sudo mkdir -p /mnt/etc/grub
+	sudo umount /mnt
+	sync
+	LOOP=$$(sudo losetup -fP --show build/disk.img) && \
+		sudo e2fsck -y $${LOOP}p1 ; \
+		sudo losetup -d $$LOOP
+
+check_fs: $(BUILDS)/disk.img
+	LOOP=$$(sudo losetup -fP --show build/disk.img) && sudo e2fsck -n $${LOOP}p1 ; sudo losetup -d $$LOOP
+
+mount_fs: $(BUILDS)/disk.img
+	sudo mount -o loop,offset=$$((2048*512)) build/disk.img /mnt
+
 clean:
 	rm -f bootloader/bootloader.bin kernel/kernel_entry.o kernel/kernel.o kernel/kernel.bin $(KERNEL_BIN_DEPS) $(BUILDS)/disk.img
 
-run: $(BUILDS)/disk.img
+run: $(BUILDS)/disk.img fill-disk
 	qemu-system-i386 -drive format=raw,file=$< -display sdl -serial stdio
 
 run-debug-int: $(BUILDS)/disk.img

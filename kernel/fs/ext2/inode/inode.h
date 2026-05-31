@@ -3,6 +3,11 @@
 
 #include <stdint.h>
 
+#define FS_EXT2_INODE_FTYPE_DIR     0x4000
+#define FS_EXT2_INODE_FTYPE_FILE    0x8000
+#define FS_EXT2_INODE_FTYPE_SYMLINK 0xA000
+
+
 typedef struct {
     uint16_t inode_type_and_permissions;
     uint16_t inode_user_id;
@@ -20,6 +25,7 @@ typedef struct {
     uint32_t inode_flags;
     uint32_t __inode_unused_os_specific;
 
+    uint32_t inode_direct_blk_ptr0;
     uint32_t inode_direct_blk_ptr1;
     uint32_t inode_direct_blk_ptr2;
     uint32_t inode_direct_blk_ptr3;
@@ -41,6 +47,7 @@ typedef struct {
     uint32_t inode_size_high_bits_file__dir_acl;
     uint32_t inode_block_address_of_fragment;
     uint8_t  __inode_unused_os_specific2[12];
+    uint32_t inode_id;
 } fs_ext2_inode;
 
 #endif
