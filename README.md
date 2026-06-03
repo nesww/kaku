@@ -1,4 +1,4 @@
-# kaku - kernel - v0.0.4
+# kaku - kernel - v0.0.5
 
 Basic bootloader & kernel (x86 32bit)
 
@@ -28,7 +28,7 @@ Coming:
 - Kernel internal logging system for infos & debugging, to be extracted from the VM (serial output for now)
 - Repair IOs (VGA & Serial, TTY to check) for weird race condition from processes (will be fixed when doing syscalls)
 - A basic shell interface with some programs built-in (in progress)
-- Syscalls interface for future userspace 
+- Syscalls interface for future userspace (in progress) 
 
 See [Makefile](Makefile) to build the image and run it with QEMU.
 
