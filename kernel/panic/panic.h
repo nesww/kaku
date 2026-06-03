@@ -9,6 +9,8 @@
     __asm__ volatile("cli; hlt")
 
 static inline void __panic_init(void) {
+    tty_set_bg(0xFFb3bcff);
+    tty_set_fg(0xBB333333);
     tty_clear();
     tty_printf("kaku ---- kernel panicked!\n\n");
 }

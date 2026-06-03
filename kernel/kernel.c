@@ -5,6 +5,9 @@
 #include "hw/pit/pit.h"
 #include "hw/serial/serial.h"
 #include "hw/vesa/vesa.h"
+#include "proc/proc.h"
+#include "proc/tss.h"
+#include "proc/uspace.h"
 #include "tty/tty.h"
 
 /*kernel related includes */
@@ -53,6 +56,8 @@ static void __kernel_init(void) {
     paging_kernel_init();
     vesa_init();
     __fs_init();
+    tss_init();
+    tss_install();
     scheduler_init();
     INTERRUPTS_ENABLE();
 }
@@ -70,33 +75,22 @@ static void __kernel_print_info() {
     TTY_KERNEL("everything initialized, kernel running\n\n");
 }
 
+void __us_entry(void) {
+    asm volatile("int $0x80");
+    while(1);
+}
+
 void kernel_main(void) {
     serial_init();
     __hw_init();
     __kernel_init();
     tty_init();
      __kernel_print_info();
-    TTY_WARN("No entry process was started, since none was given...\n");
-    TTY_INFO("idling...\n");
+    TTY_INFO("will create entry process\n");
 
-    vfs_node *config = vfs_open("/config");
-    if (!config) {
-        TTY_ERROR("open failed!\n");
-        goto end;
-    }
-    TTY_INFO("opened %s\n", config->name);
-    TTY_INFO("%s is a dir?: %x\n", config->name, config->is_dir);
+    proc *entry = proc_create(__us_entry);
+    TTY_INFO("process with PID %x created, will switch to userspace...\n", entry->proc_id);
+    jump_to_userspace(entry->reg_states.eip, entry->user_stack);
 
-    uint32_t size = KB(1);
-    uint8_t *buf = kmalloc(size);
-    vfs_read(config, buf, size);
-
-    TTY_INFO("read config file, following, its contents:\n\n");
-    tty_printf("%s\n", buf);
-
-    kfree(buf);
-    vfs_close(config);
-
-    end:
     while(1);
 }

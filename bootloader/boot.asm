@@ -4,6 +4,8 @@
 
 CODE_SEG equ gdt_code - gdt_start   ; = 0x08
 DATA_SEG equ gdt_data - gdt_start   ; = 0x10
+CODE_USER_SEG equ gdt_user_code - gdt_start ; = 0x18
+DATA_USER_SEG equ gdt_user_data - gdt_start ; = 0x20
 
 section .text
   cli
@@ -121,6 +123,22 @@ gdt_data:
     db 0x92         ; access byte (data)
     db 0xCF         ; flags + limit bits 16-19
     db 0x00         ; base bits 24-31
+gdt_user_code:
+    dw 0xFFFF       ; limit bits 0-15
+    dw 0x0000       ; base bits 0-15
+    db 0x00         ; base bits 16-23
+    db 0xFA         ; access byte (code, DPL=3)
+    db 0xCF         ; flags + limit bits 16-19
+    db 0x00         ; base bits 24-31
+gdt_user_data:
+    dw 0xFFFF       ; limit bits 0-15
+    dw 0x0000       ; base bits 0-15
+    db 0x00         ; base bits 16-23
+    db 0xF2         ; access byte (data, DPL=3)
+    db 0xCF         ; flags + limit bits 16-19
+    db 0x00         ; base bits 24-31
+gdt_tss:
+    dq 0
 gdt_end:
 gdt_descriptor:
     dw gdt_end - gdt_start - 1

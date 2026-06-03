@@ -9,7 +9,7 @@
 static idt_entry idt[IDT_TAB_SIZE];
 
 
-void _idt_set_entry(int num, void *isr_wrapper) {
+static void __idt_set_entry(int num, void *isr_wrapper) {
     idt_entry entry = {0};
     entry.zero = 0x0;
     entry.segment_selector = 0x08;
@@ -20,6 +20,11 @@ void _idt_set_entry(int num, void *isr_wrapper) {
     idt[num] = entry;
 }
 
+static void __idt_set_user_entry(int num, void *isr_wrapper) {
+    __idt_set_entry(num, isr_wrapper);
+    idt[num].type_attr = 0xEE;
+}
+
 void idt_init(void) {
     void* handlers[] = {
         // intel legacy ISRs
@@ -27,12 +32,14 @@ void idt_init(void) {
         isr11, isr12, isr13, isr14, isr15, isr16, isr17, isr18, isr19, isr20,
         isr21, isr22, isr23, isr24, isr25, isr26, isr27, isr28, isr29, isr30, isr31,
         // PIC ISRs
-        isr_timer_stub, isr33, isr34, isr35, isr36, isr37, isr38, isr39, isr40, isr41, isr42, isr43, isr44, isr45, isr46, isr47
+        isr_timer_stub, isr33, isr34, isr35, isr36, isr37, isr38, isr39, isr40, isr41, isr42, isr43, isr44, isr45, isr46, isr47,
     };
 
     for (int i = 0; i < 48; ++i) {
-        _idt_set_entry(i, handlers[i]);
+        __idt_set_entry(i, handlers[i]);
     }
+
+    __idt_set_user_entry(128, isr_syscall_stub);
 
     // idt_descriptor desc;
     // desc.limit = sizeof(idt) - 1;

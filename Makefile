@@ -6,7 +6,7 @@ CFLAGS = -ffreestanding -nostdlib -mgeneral-regs-only -I/usr/lib/gcc/i686-elf/15
 LDFLAGS = -T kernel/kernel.ld --oformat binary -Map kernel/kernel.map
 
 KERNEL_SRCS = $(shell find kernel -mindepth 2 -name '*.c')
-KERNEL_BIN_DEPS = $(KERNEL_SRCS:.c=.o) kernel/hw/pit/pit_asm.o
+KERNEL_BIN_DEPS = $(KERNEL_SRCS:.c=.o) kernel/hw/pit/pit_asm.o kernel/syscall/syscall_asm.o
 
 #for calculating automatically value for AL in bootloader/boot.asm for loading all sectors for the kernel
 KERNEL_SECTORS=$(shell expr $$(wc -c < kernel/kernel.bin) / 512 + 2)
@@ -29,8 +29,11 @@ kernel/kernel.o: kernel/kernel.c
 kernel/kernel.bin: kernel/kernel_entry.o kernel/kernel.o $(KERNEL_BIN_DEPS)
 	$(LD) $(LDFLAGS) $^ -o $@
 
-#pit specific ASM file
+#specific ASM files
 kernel/hw/pit/pit_asm.o: kernel/hw/pit/pit_asm.asm
+	$(ASM) -f elf32 $< -o $@
+
+kernel/syscall/syscall_asm.o: kernel/syscall/syscall_asm.asm
 	$(ASM) -f elf32 $< -o $@
 
 #kernel internal & utils targets
