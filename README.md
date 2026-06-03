@@ -1,4 +1,4 @@
-# kaku - kernel - v0.0.3
+# kaku - kernel - v0.0.4
 
 Basic bootloader & kernel (x86 32bit)
 
@@ -22,6 +22,7 @@ Now:
 - [ext2.h](kernel/fs/ext2/ext2.h): `ext2fs` implementation: can read, write, edit files (cannot delete yet)
 - [vesa.h](kernel/hw/vesa/vesa.h): VESA 1024x768 display with 8 bits colors
 - [tty.h](kernel/tty/tty.h): basic TTY which can scroll, with a backbuffer
+- [vfs.h](kernel/vfs/vfs.h): VFS interface to (with an ext2 driver)
 
 Coming:
 - Kernel internal logging system for infos & debugging, to be extracted from the VM (serial output for now)

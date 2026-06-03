@@ -20,7 +20,7 @@
 
 #define KAKU_VER_MAJOR 0
 #define KAKU_VER_MINOR 0
-#define KAKU_VER_PATCH 3
+#define KAKU_VER_PATCH 4
 
 #define KAKU_ASCII \
 "         @@       @@@        \t    .-. .-')    ('-.    .-. .-')              \n"       \
