@@ -98,13 +98,13 @@ static inline uint8_t fs_ext2_is_inode_file(fs_ext2_inode *inode) {
     return (inode->inode_type_and_permissions & 0xf000) == FS_EXT2_INODE_FTYPE_FILE;
 }
 
-void fs_ext2_read_file_contents(fs_ext2_inode *inode, uint8_t *buf, uint32_t size);
+int fs_ext2_read_file_contents(fs_ext2_inode *inode, uint8_t *buf, uint32_t size);
 
 /* writing in the fs */
 
 uint32_t fs_ext2_alloc_block(uint32_t preferred_group);
 uint32_t fs_ext2_alloc_inode(uint32_t preferred_group);
 
-void fs_ext2_write_file(fs_ext2_inode *inode, uint8_t *buf, uint32_t size);
+int fs_ext2_write_file(fs_ext2_inode *inode, uint8_t *buf, uint32_t size);
 void fs_ext2_create_file(const char *path, uint8_t *buf, uint32_t size);
 #endif //FS_EXT2_H

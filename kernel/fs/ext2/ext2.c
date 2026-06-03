@@ -230,10 +230,10 @@ fs_ext2_inode fs_ext2_resolve_path(const char* path) {
         return (fs_ext2_inode){0};
 }
 
-void fs_ext2_read_file_contents(fs_ext2_inode *inode, uint8_t *buf, uint32_t size) {
+int fs_ext2_read_file_contents(fs_ext2_inode *inode, uint8_t *buf, uint32_t size) {
     if (!fs_ext2_is_inode_file(inode)) {
         SERIAL_ERROR("given inode is not a file, cannot read bytes\n");
-        return;
+        return -1;
     }
 
     uint32_t i = 0;
@@ -254,6 +254,7 @@ void fs_ext2_read_file_contents(fs_ext2_inode *inode, uint8_t *buf, uint32_t siz
         written_bytes += nb_of_bytes_to_copy;
         ++i;
     }
+    return written_bytes;
 }
 
 void __fs_ext2_write_bgdt_to_disk(void) {
@@ -342,10 +343,10 @@ uint32_t fs_ext2_alloc_inode(uint32_t preferred_group) {
     return inode_nb;
 }
 
-void fs_ext2_write_file(fs_ext2_inode *inode, uint8_t *buf, uint32_t size) {
+int fs_ext2_write_file(fs_ext2_inode *inode, uint8_t *buf, uint32_t size) {
     if (!fs_ext2_is_inode_file(inode)) {
         SERIAL_ERROR("given inode is not a file, will not write bytes to given inode\n");
-        return;
+        return -1;
     }
 
     if (size != inode->inode_size_low_bits) inode->inode_size_low_bits = size;
@@ -374,6 +375,7 @@ void fs_ext2_write_file(fs_ext2_inode *inode, uint8_t *buf, uint32_t size) {
         ++i;
     }
     fs_ext2_write_inode(inode);
+    return written_bytes;
 }
 
 void fs_ext2_create_file(const char *path, uint8_t *buf, uint32_t size) {

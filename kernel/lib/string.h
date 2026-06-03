@@ -56,4 +56,8 @@ static inline char *kstrjoin(dynarray *strs, char delim) {
     return result;
 }
 
+static inline void kstrcpy(char *dst, const char *src) {
+    while((*dst++ = *src++));
+}
+
 #endif // KCORE_STRING

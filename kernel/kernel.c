@@ -5,15 +5,15 @@
 #include "hw/pit/pit.h"
 #include "hw/serial/serial.h"
 #include "hw/vesa/vesa.h"
-#include "panic/panic.h"
 #include "tty/tty.h"
 
 /*kernel related includes */
 #include "alloc/alloc.h"
-#include "alloc/alloc.h"
 #include "frame/frame.h"
 #include "paging/paging.h"
 #include "proc/sched.h"
+#include "vfs/vfs.h"
+#include "vfs/ext2_vfs.h"
 
 /* libs includes */
 // #include <stdint.h>
@@ -44,6 +44,7 @@ static void __hw_init(void) {
 static void __fs_init(void) {
     fs_ext2_read_superblock();
     fs_ext2_read_bgdt();
+    vfs_register_driver(vfs_get_ext2_driver());
 }
 
 static void __kernel_init(void) {
@@ -78,5 +79,24 @@ void kernel_main(void) {
     TTY_WARN("No entry process was started, since none was given...\n");
     TTY_INFO("idling...\n");
 
+    vfs_node *config = vfs_open("/config");
+    if (!config) {
+        TTY_ERROR("open failed!\n");
+        goto end;
+    }
+    TTY_INFO("opened %s\n", config->name);
+    TTY_INFO("%s is a dir?: %x\n", config->name, config->is_dir);
+
+    uint32_t size = KB(1);
+    uint8_t *buf = kmalloc(size);
+    vfs_read(config, buf, size);
+
+    TTY_INFO("read config file, following, its contents:\n\n");
+    tty_printf("%s\n", buf);
+
+    kfree(buf);
+    vfs_close(config);
+
+    end:
     while(1);
 }
