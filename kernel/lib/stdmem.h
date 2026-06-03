@@ -10,6 +10,11 @@ static inline void *kmemcpy(void *dst, const void *src, uint32_t n) {
     return dst;
 }
 
+static inline void kmemset(void *dst, uint8_t val, uint32_t n) {
+    uint8_t *d = (uint8_t*)dst;
+    while (n--) *d++ = val;
+}
+
 static inline void *kmalloc(uint32_t size) {
     return kheap_alloc(size);
 }

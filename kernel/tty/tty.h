@@ -12,11 +12,19 @@
 #define TTY_KERNEL(str, ...) \
     tty_printf("<kernel>: " str, ##__VA_ARGS__);
 
+typedef struct {
+    char c;
+    uint32_t fg;
+    uint32_t bg;
+} tty_char;
+
 void tty_init(void);
 void tty_putchar(char c);
 void tty_puts(const char *s);
 void tty_printf(const char *s, ...);
 void tty_vprintf(const char *s, va_list args);
+void tty_flush();
+void tty_flush_current_line(void);
 void tty_clear(void);
 void tty_set_fg(uint32_t color);
 void tty_set_bg(uint32_t color);

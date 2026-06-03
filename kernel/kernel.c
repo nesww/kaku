@@ -74,10 +74,9 @@ void kernel_main(void) {
     __hw_init();
     __kernel_init();
     tty_init();
-    __kernel_print_info();
-
+     __kernel_print_info();
     TTY_WARN("No entry process was started, since none was given...\n");
-    TTY_INFO("idling...");
+    TTY_INFO("idling...\n");
 
     while(1);
 }

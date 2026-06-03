@@ -1,5 +1,6 @@
 #include "vesa.h"
 #include "paging/paging.h"
+
 static uint32_t *vesa_framebuffer;
 static uint16_t vesa_pitch;
 
@@ -20,6 +21,10 @@ void vesa_clear(uint32_t color) {
             *line++ = color;
         }
     }
+}
+
+void vesa_set_pixel(uint32_t x, uint32_t y, uint32_t color) {
+    vesa_framebuffer[y * vesa_pitch + x] = color;
 }
 
 uint32_t *vesa_get_fb(void) {

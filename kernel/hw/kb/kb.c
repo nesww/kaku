@@ -1,6 +1,7 @@
 #include "kb.h"
 #include "hw/vga/vga.h"
 #include "hw/io/io.h"
+#include "tty/tty.h"
 
 static char kb_map[128] = {
   [KB_SC_PRESSED_ONE]   =  '1',
@@ -86,13 +87,15 @@ void kb_handle_interrupt() {
     if (scancode >= 0x80) return;
 
     if (scancode == KB_SC_PRESSED_BACKSPACE) {
-        vga_backspace();
+        // vga_backspace();
+        tty_puts("backspace: not implemented\n");
     } else if (scancode == KB_SC_PRESSED_ENTER) {
-        vga_println("");
+        tty_putchar('\n');
     } else if (scancode == KB_SC_PRESSED_NOTHING) {
         return;
     } else {
         char c = kb_map[scancode];
-        if (c != 0) vga_putchar(kb_map[scancode]);
+        if (c != 0) tty_putchar(kb_map[scancode]);
     }
+    tty_flush_current_line();
 }
