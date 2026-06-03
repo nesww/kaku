@@ -17,10 +17,26 @@ static inline void __panic_init(void) {
 
 static void kernel_panic_isr(int int_num, struct interrupt_frame *int_frame) {
     __panic_init();
-    tty_printf("KERNEL PANIC\n> Interrupt: %d\n> State frame: \n>> IP (where): %x\n>> CPU flags: %x\n>> CS (code segment): %x\n>> SS (stack segment): %x\n>> SP (stack pointer): %x\n"
-        , int_num, int_frame->ip, int_frame->flags, int_frame->cs, int_frame->ss, int_frame->sp);
-    SERIAL_PANIC("KERNEL PANIC\n> Interrupt: %d\n> State frame: \n>> IP (where): %x\n>> CPU flags: %x\n>> CS (code segment): %x\n>> SS (stack segment): %x\n>> SP (stack pointer): %x\n"
-        , int_num, int_frame->ip, int_frame->flags, int_frame->cs, int_frame->ss, int_frame->sp);
+    tty_printf("KERNEL PANIC\n>"
+        "Interrupt: %d\n"
+        "> State frame: \n"
+        ">> IP (where): %x\n"
+        ">> CPU flags: %x\n"
+        ">> CS (code segment): %x\n"
+        ">> SS (stack segment): %x\n"
+        ">> SP (stack pointer): %x\n",
+        int_num, int_frame->ip, int_frame->flags,
+        int_frame->cs, int_frame->ss, int_frame->sp);
+    SERIAL_PANIC("KERNEL PANIC\n>"
+        "Interrupt: %d\n"
+        "> State frame: \n"
+        ">> IP (where): %x\n"
+        ">> CPU flags: %x\n"
+        ">> CS (code segment): %x\n"
+        ">> SS (stack segment): %x\n"
+        ">> SP (stack pointer): %x\n",
+        int_num, int_frame->ip, int_frame->flags,
+        int_frame->cs, int_frame->ss, int_frame->sp);
     PANIC_HLT();
 }
 
