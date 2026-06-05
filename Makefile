@@ -6,12 +6,13 @@ CFLAGS = -ffreestanding -nostdlib -mgeneral-regs-only -I/usr/lib/gcc/i686-elf/15
 LDFLAGS = -T kernel/kernel.ld --oformat binary -Map kernel/kernel.map
 
 KERNEL_SRCS = $(shell find kernel -mindepth 2 -name '*.c')
-KERNEL_BIN_DEPS = $(KERNEL_SRCS:.c=.o) kernel/hw/pit/pit_asm.o kernel/syscall/syscall_asm.o
+KERNEL_BIN_DEPS = $(KERNEL_SRCS:.c=.o) kernel/hw/pit/pit_asm.o kernel/syscall/syscall_asm.o kernel/hw/idt/page_fault.o
 
 #for calculating automatically value for AL in bootloader/boot.asm for loading all sectors for the kernel
 KERNEL_SECTORS=$(shell expr $$(wc -c < kernel/kernel.bin) / 512 + 2)
 
 BUILDS=build
+USER_FS=user_fs
 
 all: $(BUILDS)/disk.img
 
@@ -36,6 +37,9 @@ kernel/hw/pit/pit_asm.o: kernel/hw/pit/pit_asm.asm
 kernel/syscall/syscall_asm.o: kernel/syscall/syscall_asm.asm
 	$(ASM) -f elf32 $< -o $@
 
+kernel/hw/idt/page_fault.o: kernel/hw/idt/page_fault.asm
+	$(ASM) -f elf32 $< -o $@
+
 #kernel internal & utils targets
 
 kernel/%.o: kernel/%.c
@@ -48,12 +52,19 @@ $(BUILDS)/disk.img: kernel/kernel.bin bootloader/bootloader.bin
 	echo '2048,,' | sfdisk --label dos $(BUILDS)/disk.img
 	mkfs.ext2 -E offset=$$((2048 * 512)) $(BUILDS)/disk.img
 
-fill-disk:
+$(USER_FS)/bin/entry.bin: $(USER_FS)/src/entry.c $(USER_FS)/src/entry.ld
+	$(CC) -ffreestanding -nostdlib -o $(USER_FS)/src/entry.o -c $(USER_FS)/src/entry.c
+	$(LD) -T $(USER_FS)/src/entry.ld -o $(USER_FS)/bin/entry.bin --oformat binary $(USER_FS)/src/entry.o
+	rm -rf $(USER_FS)/src/*.o
+
+$(USER_FS)/bin/proc2.bin: $(USER_FS)/src/proc2.c $(USER_FS)/src/proc2.ld
+	$(CC) -ffreestanding -nostdlib -o $(USER_FS)/src/proc2.o -c $(USER_FS)/src/proc2.c
+	$(LD) -T $(USER_FS)/src/proc2.ld -o $(USER_FS)/bin/proc2.bin --oformat binary $(USER_FS)/src/proc2.o
+	rm -rf $(USER_FS)/src/*.o
+
+fill-disk: $(BUILDS)/disk.img $(USER_FS)/bin/entry.bin $(USER_FS)/bin/proc2.bin
 	sudo mount -o loop,offset=$$((2048*512)) build/disk.img /mnt
-	printf "noption=1\ngreet=1\n\0" | sudo tee /mnt/config
-	sudo touch /mnt/toto.txt
-	printf "baba\nbibi\0" | sudo tee /mnt/toto.txt
-	sudo mkdir -p /mnt/etc/grub
+	sudo cp -r user_fs/* /mnt/
 	sudo umount /mnt
 	sync
 	LOOP=$$(sudo losetup -fP --show build/disk.img) && \

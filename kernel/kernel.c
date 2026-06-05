@@ -1,22 +1,23 @@
 /*hardware related includes */
-#include "fs/ext2/ext2.h"
-#include "hw/idt/idt.h"
-#include "hw/pic/pic.h"
-#include "hw/pit/pit.h"
-#include "hw/serial/serial.h"
-#include "hw/vesa/vesa.h"
-#include "proc/proc.h"
-#include "proc/tss.h"
-#include "proc/uspace.h"
-#include "tty/tty.h"
+#include "panic/panic.h"
+#include <hw/idt/idt.h>
+#include <hw/pic/pic.h>
+#include <hw/pit/pit.h>
+#include <hw/serial/serial.h>
+#include <hw/vesa/vesa.h>
 
 /*kernel related includes */
-#include "alloc/alloc.h"
-#include "frame/frame.h"
-#include "paging/paging.h"
-#include "proc/sched.h"
-#include "vfs/vfs.h"
-#include "vfs/ext2_vfs.h"
+#include <alloc/alloc.h>
+#include <frame/frame.h>
+#include <paging/paging.h>
+#include <proc/sched.h>
+#include <log/log.h>
+#include <fs/ext2/ext2.h>
+#include <vfs/vfs.h>
+#include <vfs/ext2_vfs.h>
+#include <proc/proc.h>
+#include <proc/tss.h>
+#include <tty/tty.h>
 
 /* libs includes */
 // #include <stdint.h>
@@ -63,21 +64,29 @@ static void __kernel_init(void) {
 }
 
 static void __kernel_print_info() {
-    serial_printf("\f\n===========================================================\n");
-    serial_printf("   kaku - v%d.%d.%d\n", KAKU_VER_MAJOR, KAKU_VER_MINOR, KAKU_VER_PATCH);
-    serial_printf(KAKU_ASCII);
-    serial_printf("===========================================================\n\n");
-    tty_printf("\n===========================================================\n");
-    tty_printf("   kaku - v%d.%d.%d\n", KAKU_VER_MAJOR, KAKU_VER_MINOR, KAKU_VER_PATCH);
-    tty_printf(KAKU_ASCII);
-    tty_printf("===========================================================\n\n");
-    SERIAL_KERNEL("everything initialized, kernel running\n\n");
-    TTY_KERNEL("everything initialized, kernel running\n\n");
+    tty_printf(
+        "\n===========================================================\n"
+        "   kaku - v%d.%d.%d\n"
+        KAKU_ASCII
+        "===========================================================\n\n"
+        , KAKU_VER_MAJOR, KAKU_VER_MINOR, KAKU_VER_PATCH);
+    LOG_INFO("everything initiliazd, kernel running \n\n");
 }
 
-void __us_entry(void) {
-    asm volatile("int $0x80");
-    while(1);
+uint32_t __load_proc(const char *path, uint32_t addr) {
+    vfs_node *file = vfs_open(path);
+    if (!file) {
+        LOG_WARN("given path '%s': file not found\n", path);
+        return 0;
+    }
+    proc *proc = proc_create((void(*)())addr);
+    uint32_t frame = (uint32_t)fa_alloc();
+    paging_map(proc->proc_pd, frame, addr, PROC_USER_FLAGS);
+    vfs_read(file, (uint8_t*)PHYS_TO_VIRT(frame), file->size);
+    vfs_close(file);
+    scheduler_add_proc(proc);
+    LOG_INFO("loaded proc from %s at %x, pid=%d\n", path, addr, proc->proc_id);
+    return 1;
 }
 
 void kernel_main(void) {
@@ -85,12 +94,21 @@ void kernel_main(void) {
     __hw_init();
     __kernel_init();
     tty_init();
-     __kernel_print_info();
-    TTY_INFO("will create entry process\n");
+    __kernel_print_info();
 
-    proc *entry = proc_create(__us_entry);
-    TTY_INFO("process with PID %x created, will switch to userspace...\n", entry->proc_id);
-    jump_to_userspace(entry->reg_states.eip, entry->user_stack);
+    uint32_t entry_address = 0x400000;
+    uint32_t proc2_address = 0x500000;
+
+    INTERRUPTS_DISABLE();
+    uint32_t count = 0;
+    count+= __load_proc("/bin/entry.bin", entry_address);
+    //in normal context we wouldn't load and start another process but here its for fun :)
+    count+= __load_proc("/bin/proc2.bin", proc2_address);
+    INTERRUPTS_ENABLE();
+
+    if (count == 0) {
+        kernel_panic("No entry process could be started!");
+    }
 
     while(1);
 }

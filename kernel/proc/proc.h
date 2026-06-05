@@ -1,7 +1,7 @@
-#ifndef PROC_H
-#define PROC_H
+#pragma once
 
-#include "paging/paging.h"
+#include <paging/paging.h>
+#include <types.h>
 
 #define PROC_USER_STACK_TOP_VADDR 0x8000000
 #define PROC_USER_FLAGS 0x7 // present | writable | user
@@ -23,6 +23,9 @@ typedef struct {
     uint32_t eip;
     uint32_t cs;
     uint32_t eflags;
+    uint32_t user_esp;
+    uint32_t user_ss;
+
 } __attribute__((packed)) proc_registers_state;
 
 typedef struct {
@@ -36,5 +39,3 @@ typedef struct {
 
 proc *proc_create(void(*entry)() /*uint32_t priority*/);
 void proc_destroy(proc *p);
-
-#endif

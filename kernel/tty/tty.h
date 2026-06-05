@@ -1,5 +1,5 @@
-#ifndef TTY_H
-#define TTY_H
+#pragma once
+
 #include <stdint.h>
 #include <stdarg.h>
 
@@ -28,5 +28,3 @@ void tty_flush_current_line(void);
 void tty_clear(void);
 void tty_set_fg(uint32_t color);
 void tty_set_bg(uint32_t color);
-
-#endif

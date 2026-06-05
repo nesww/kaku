@@ -1,8 +1,7 @@
-#ifndef PIC_H
-#define PIC_H
+#pragma once
 
 #include <stdint.h>
-#include "hw/io/io.h"
+#include <hw/io/io.h>
 
 #define PIC_INT_OFFSET 32 /* offset for interruptions */
 
@@ -53,5 +52,3 @@ static inline void pic_init() {
     outb(PIC_MASTER_DATA, 0x00);
     outb(PIC_SLAVE_DATA, 0x00);
 }
-
-#endif

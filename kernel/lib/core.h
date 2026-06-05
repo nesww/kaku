@@ -1,5 +1,4 @@
-#ifndef STDCORE_H
-#define STDCORE_H
+#pragma once
 
 #define TRUE 1
 #define FALSE 0
@@ -14,6 +13,4 @@
     do {                                    \
         if (str)                            \
             vga_printf("TODO: " #str "\n"); \
-    } while(0)                              \
-
-#endif //STDCORE_H
+    } while(0)

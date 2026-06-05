@@ -1,5 +1,4 @@
-#ifndef KB_SCANCODE_SET2
-#define KB_SCANCODE_SET2
+#pragma once
 
 /* ================================================================= */
 //PRESSED KEYS
@@ -198,5 +197,3 @@
 #define KB_SC_RELEASED_KEYPAD_THREE  0xD1
 #define KB_SC_RELEASED_KEYPAD_ZERO   0xD2
 #define KB_SC_RELEASED_KEYPAD_DOT    0xD3
-
-#endif

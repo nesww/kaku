@@ -1,5 +1,6 @@
+#include <tty/tty.h>
+
 #include "vfs.h"
-#include "tty/tty.h"
 
 static vfs_driver *__vfs_driver = 0;
 

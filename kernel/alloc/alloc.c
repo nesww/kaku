@@ -1,25 +1,23 @@
-#include "alloc.h"
-
-#include "panic/panic.h"
-#include "mem/mem.h"
-
+#include <panic/panic.h>
+#include <mem/mem.h>
 #include <stdint.h>
+
+#include "alloc.h"
 
 static k_heap kernel_heap = {0};
 static uint8_t heap_initialized = FALSE;
-extern uint32_t kernel_end;
-
 
 void kheap_init() {
     for (uint32_t i = 0; i < ALLOC_ORDERS - 1; ++i) {
         kernel_heap.free_blocks[i] = 0;
     }
-    free_block *initial = (free_block*)&kernel_end;
+    uint32_t heap_start_virt = (uint32_t)&kernel_phys_end + KERNEL_VIRT_BASE;
+    free_block *initial = (free_block*)heap_start_virt;
     initial->next = 0;
     kernel_heap.free_blocks[ALLOC_ORDERS - 1] = initial;
-    kernel_heap.heap_start = &kernel_end;
+    kernel_heap.heap_start = (void*)heap_start_virt;
     mmap_entry usable_entry = mmap_get_usable_entry();
-    kernel_heap.heap_size = KMIN(usable_entry.base_addr + usable_entry.region_len - (uint32_t)(kernel_heap.heap_start), MB(32));
+    kernel_heap.heap_size = KMIN(usable_entry.base_addr + usable_entry.region_len - (uint32_t)&kernel_phys_end, MB(4));
     heap_initialized = TRUE;
 }
 

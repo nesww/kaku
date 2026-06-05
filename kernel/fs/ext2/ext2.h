@@ -1,9 +1,9 @@
-#ifndef FS_EXT2_H
-#define FS_EXT2_H
+#pragma once
+
+#include <lib/dynarray.h>
+#include <stdint.h>
 
 #include "inode/inode.h"
-#include "lib/dynarray.h"
-#include <stdint.h>
 
 #define FS_MBR_LBA 0
 #define FS_EXT2_SIGNATURE 0xef53
@@ -107,4 +107,3 @@ uint32_t fs_ext2_alloc_inode(uint32_t preferred_group);
 
 int fs_ext2_write_file(fs_ext2_inode *inode, uint8_t *buf, uint32_t size);
 void fs_ext2_create_file(const char *path, uint8_t *buf, uint32_t size);
-#endif //FS_EXT2_H

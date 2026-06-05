@@ -1,5 +1,4 @@
-#ifndef FS_EXT2_INODE_H
-#define FS_EXT2_INODE_H
+#pragma once
 
 #include <stdint.h>
 
@@ -49,5 +48,3 @@ typedef struct {
     uint8_t  __inode_unused_os_specific2[12];
     uint32_t inode_id;
 } fs_ext2_inode;
-
-#endif

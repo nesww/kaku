@@ -1,5 +1,4 @@
-#ifndef IO_H
-#define IO_H
+#pragma once
 
 #include <stdint.h>
 
@@ -28,4 +27,3 @@ static inline uint16_t inw(uint16_t port) {
     __asm__ volatile("inw %1, %0" : "=a"(value): "Nd"(port));
     return value;
 }
-#endif

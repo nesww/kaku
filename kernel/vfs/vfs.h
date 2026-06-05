@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "lib/dynarray.h"
+#include <lib/dynarray.h>
 
 typedef struct {
     char name[256];

@@ -1,7 +1,6 @@
-#ifndef STDMEM_H
-#define STDMEM_H
+#pragma once
 
-#include "alloc/alloc.h"
+#include <alloc/alloc.h>
 
 static inline void *kmemcpy(void *dst, const void *src, uint32_t n) {
     uint8_t *d = (uint8_t*)dst;
@@ -29,5 +28,3 @@ static inline void *krealloc(void* ptr, uint32_t old_size, uint32_t new_size) {
     kfree(ptr);
     return new_ptr;
 }
-
-#endif //STDMEM_H

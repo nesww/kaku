@@ -1,8 +1,10 @@
-#include "fs/ext2/ext2.h"
-#include "fs/ext2/inode/inode.h"
-#include "lib/dynarray.h"
-#include "lib/string.h"
-#include "vfs/vfs.h"
+#include <fs/ext2/ext2.h>
+#include <fs/ext2/inode/inode.h>
+#include <lib/dynarray.h>
+#include <lib/string.h>
+#include <vfs/vfs.h>
+
+#include "ext2_vfs.h"
 
 static vfs_node *__ext2_open(const char *path) {
     fs_ext2_inode inode = fs_ext2_resolve_path(path);

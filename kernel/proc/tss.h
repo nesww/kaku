@@ -23,3 +23,4 @@ typedef struct __attribute__((packed)) {
 
 void tss_init(void);
 void tss_install(void);
+void tss_set_kernel_stack(uint32_t stack);

@@ -1,6 +1,6 @@
-#include "pit.h"
+#include <hw/io/io.h>
 
-#include "hw/io/io.h"
+#include "pit.h"
 
 void pit_init(void) {
     outb(PIT_CMD_PORT, 0x36);

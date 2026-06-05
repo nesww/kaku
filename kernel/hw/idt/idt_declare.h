@@ -15,7 +15,7 @@ ISR_ERR(10);
 ISR_ERR(11);
 ISR_ERR(12);
 ISR_ERR(13);
-ISR_ERR(14);
+extern void isr_page_fault_stub(void); // ISR 14
 ISR(15);
 ISR(16);
 ISR(17);

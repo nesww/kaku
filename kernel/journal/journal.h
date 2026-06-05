@@ -1,8 +1,5 @@
-#ifndef JOURNAL_H
-#define JOURNAL_H
+#pragma once
 
 typedef struct {
     //TODO: wait for filesystem
 } kjournal;
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef VGA_H
-#define VGA_H
+#pragma once
 
 #include <stdarg.h>
 #include <stdint.h>
@@ -42,5 +41,3 @@ void vga_backspace(void);
 void vga_setforeground_color(uint8_t fg);
 /* only 4 first bits will be used */
 void vga_setbackground_color(uint8_t bg);
-
-#endif

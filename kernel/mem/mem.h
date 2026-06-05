@@ -1,10 +1,13 @@
-#ifndef KERNEL_MEM_H
-#define KERNEL_MEM_H
+#pragma once
 
 #include <stdint.h>
 
-#define MMAP_ENTRY_START_ADDR 0x504
-#define MMAP_COUNTER_ADDR     0x500
+#define KERNEL_VIRT_BASE 0xC0000000
+
+extern uint32_t kernel_phys_end;
+
+#define MMAP_ENTRY_START_ADDR (0x504 + KERNEL_VIRT_BASE)
+#define MMAP_COUNTER_ADDR     (0x500 + KERNEL_VIRT_BASE)
 
 #define MMAP_REGTYPE_USABLE   1
 #define MMAP_REGTYPE_RESERVED 2
@@ -25,10 +28,7 @@ typedef struct {
 } __attribute__((packed)) mem_heap;
 
 static inline mmap_entry *mem_get_mmap_entries(void) {
-    return (mmap_entry*)0x504;
+    return (mmap_entry*)(0x504 + KERNEL_VIRT_BASE);
 }
 
 mmap_entry mmap_get_usable_entry(void);
-
-
-#endif //KERNEL_MEM_H

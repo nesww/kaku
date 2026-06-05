@@ -1,5 +1,4 @@
-#ifndef SERIAL_H
-#define SERIAL_H
+#pragma once
 
 #define SERIAL_BASE 0x3F8
 #define SERIAL_COM1_LINE_STATUS_PORT   0x3FD
@@ -19,5 +18,4 @@
 void serial_putchar(char c);
 void serial_init(void);
 void serial_printf(const char *str, ...);
-
-#endif //SERIAL_H
+void serial_puts(const char *s);

@@ -1,7 +1,6 @@
-#ifndef ALLOC_H
-#define ALLOC_H
+#pragma once
 
-#include "lib/core.h"
+#include <lib/core.h>
 #include <stdint.h>
 
 #define ALLOC_MIN_BYTES_BLOCK 16
@@ -24,5 +23,3 @@ void kheap_free(void *ptr);
 
 void *kheap_get_start(void);
 uint32_t kheap_get_size(void);
-
-#endif //ALLOC_H

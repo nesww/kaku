@@ -1,10 +1,12 @@
-#include "serial.h"
-#include "lib/core.h"
-#include "panic/panic.h"
-#include "lib/print.h"
-#include "hw/io/io.h"
+#include <lib/core.h>
+#include <panic/panic.h>
+#include <lib/print.h>
+#include <hw/io/io.h>
 #include <stdarg.h>
 #include <stdint.h>
+
+#include "serial.h"
+#include "log/log.h"
 
 uint8_t serial_initialized = FALSE;
 
@@ -15,6 +17,7 @@ void serial_init(void) {
     outb(SERIAL_BASE + 1, 0x00); //divisor high
     outb(SERIAL_BASE + 3, 0x03); //8 bits, no parity, 1 stop bit
     outb(SERIAL_BASE + 2, 0xC7); //enable fifo
+    log_register_sink(serial_puts);
     serial_initialized = TRUE;
 }
 
@@ -34,4 +37,8 @@ void serial_printf(const char *str, ...) {
     va_start(args, str);
     kvprintf_to(serial_putchar, __serial_newline, str, args);
     va_end(args);
+}
+
+void serial_puts(const char *s) {
+    while (*s) serial_putchar(*s++);
 }

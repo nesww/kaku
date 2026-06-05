@@ -1,8 +1,10 @@
+#include <hw/vesa/vesa.h>
+#include <fonts/default8x16.h>
+#include <log/log.h>
+#include <lib/print.h>
+#include <lib/stdmem.h>
+
 #include "tty.h"
-#include "hw/vesa/vesa.h"
-#include "fonts/default8x16.h"
-#include "lib/print.h"
-#include "lib/stdmem.h"
 
 #define TTY_CHAR_WIDTH  8
 #define TTY_CHAR_HEIGHT 16
@@ -29,10 +31,16 @@ static void __tty_newline(void) {
         __tty_scroll();
 }
 
+static void __tty_log_sink(const char *str) {
+    tty_puts(str);
+    tty_flush();
+}
+
 void tty_init(void) {
     tty_cursor_x = 0;
     tty_cursor_y = 0;
     kmemset(tty_backbuffer, 0, sizeof(tty_backbuffer));
+    log_register_sink(__tty_log_sink);
 }
 
 void tty_putchar(char c) {
@@ -124,8 +132,8 @@ static void __tty_scroll(void) {
 void tty_clear(void) {
     tty_cursor_x = 0;
     tty_cursor_y = 0;
+    kmemset(tty_backbuffer, 0, sizeof(tty_backbuffer));
     vesa_clear(tty_bg);
-    tty_flush();
 }
 
 void tty_set_fg(uint32_t color) { tty_fg = color; }

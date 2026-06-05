@@ -1,8 +1,9 @@
+#include <mem/mem.h>
+#include <panic/panic.h>
+#include <lib/stdmem.h>
+#include <lib/core.h>
+
 #include "frame.h"
-#include "mem/mem.h"
-#include "panic/panic.h"
-#include "lib/stdmem.h"
-#include "lib/core.h"
 
 static uint8_t *fa_bitmap;
 static uint32_t fa_bitmap_size = 0;
@@ -29,7 +30,7 @@ void fa_init(void) {
     }
 
     mmap_entry usable_entry = mmap_get_usable_entry();
-    uint32_t start_fa_usable = (uint32_t)kheap_get_start() + kheap_get_size();
+    uint32_t start_fa_usable = (uint32_t)&kernel_phys_end + kheap_get_size();
     uint32_t frame_index_start = start_fa_usable / 4096;
     uint32_t end_fa_usable = usable_entry.base_addr + usable_entry.region_len;
     uint32_t frame_index_end = end_fa_usable / 4096;

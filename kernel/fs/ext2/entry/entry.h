@@ -1,5 +1,4 @@
-#ifndef FS_EXT2_ENTRY_H
-#define FS_EXT2_ENTRY_H
+#pragma once
 
 #include <stdint.h>
 
@@ -10,5 +9,3 @@ typedef struct {
     uint8_t  entry_type;
     uint8_t  entry_name[256];
 } fs_ext2_entry;
-
-#endif

@@ -1,8 +1,7 @@
-#ifndef IDT_H
-#define IDT_H
+#pragma once
 
 #include <stdint.h>
-#include "types.h"
+#include <types.h>
 
 #define IDT_TAB_SIZE 256
 
@@ -48,4 +47,4 @@ typedef struct {
    uint32_t base;
 } __attribute__((packed))idt_descriptor;
 
-#endif
+uint32_t page_fault_handler(uint32_t *regs);

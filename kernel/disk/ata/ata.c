@@ -1,7 +1,8 @@
+#include <hw/io/io.h>
+#include <hw/serial/serial.h>
+#include <lib/core.h>
+
 #include "ata.h"
-#include "hw/io/io.h"
-#include "hw/serial/serial.h"
-#include "lib/core.h"
 
 //TODO: add a timeout to prevent CPU lock before using scheduler or IRQs for reducing CPU usage
 void ata_wait_bsy(void) {

@@ -1,5 +1,4 @@
-#ifndef DYNARRAY_H
-#define DYNARRAY_H
+#pragma once
 
 #include <stdint.h>
 #include "stdmem.h"
@@ -25,6 +24,14 @@ static inline void dynarray_add(dynarray *da, void *elt) {
     }
     ((void**)da->data)[da->count] = elt;
     da->count++;
+}
+
+static inline void dynarray_remove(dynarray *da, uint32_t index) {
+    if (index >= da->count) return;
+    for (uint32_t i = index; i < da->count - 1; ++i) {
+        ((void**)da->data)[i] = ((void**)da->data)[i + 1];
+    }
+    da->count--;
 }
 
 static inline void *dynarray_remove_last(dynarray *da) {
@@ -57,5 +64,3 @@ static inline void dynarray_free_deep(dynarray *da, void(*free_callback)(void*))
     }
     dynarray_free(da);
 }
-
-#endif //DYNARRAY_H

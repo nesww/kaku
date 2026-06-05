@@ -1,15 +1,15 @@
-#include "ext2.h"
-#include "disk/ata/ata.h"
-#include "fs/ext2/entry/entry.h"
-#include "fs/ext2/inode/inode.h"
-#include "hw/serial/serial.h"
-#include "lib/core.h"
-#include "lib/dynarray.h"
-#include "lib/math.h"
-#include "lib/stdmem.h"
-#include "lib/string.h"
-#include "panic/panic.h"
+#include <disk/ata/ata.h>
+#include <fs/ext2/entry/entry.h>
+#include <hw/serial/serial.h>
+#include <lib/core.h>
+#include <lib/dynarray.h>
+#include <lib/math.h>
+#include <lib/stdmem.h>
+#include <lib/string.h>
+#include <panic/panic.h>
 #include <stdint.h>
+
+#include "ext2.h"
 
 typedef uint32_t fs_ext2_blk;
 typedef uint32_t fs_ext2_lba;

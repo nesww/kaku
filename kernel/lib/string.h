@@ -1,8 +1,8 @@
-#ifndef KCORE_STRING
-#define KCORE_STRING
+#pragma once
+
 #include <stdint.h>
 #include "dynarray.h"
-#include "lib/stdmem.h"
+#include "stdmem.h"
 
 static inline uint32_t kstrlen (const char *str) {
     uint32_t len = 0;
@@ -59,5 +59,3 @@ static inline char *kstrjoin(dynarray *strs, char delim) {
 static inline void kstrcpy(char *dst, const char *src) {
     while((*dst++ = *src++));
 }
-
-#endif // KCORE_STRING

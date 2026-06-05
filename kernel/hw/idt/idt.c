@@ -1,11 +1,17 @@
-#include "idt.h"
 #include <stdint.h>
-#include "hw/serial/serial.h"
-#include "hw/vga/vga.h"
-#include "hw/pic/pic.h"
-#include "panic/panic.h"
-#include "hw/kb/kb.h"
+#include <hw/serial/serial.h>
+#include <hw/vga/vga.h>
+#include <hw/pic/pic.h>
+#include <panic/panic.h>
+#include <hw/kb/kb.h>
+#include <log/log.h>
+#include <proc/proc.h>
+#include <proc/sched.h>
+#include <types.h>
+
+#include "idt.h"
 #include "idt_declare.h"
+
 static idt_entry idt[IDT_TAB_SIZE];
 
 
@@ -29,7 +35,7 @@ void idt_init(void) {
     void* handlers[] = {
         // intel legacy ISRs
         isr0, isr1, isr2, isr3, isr4, isr5, isr6, isr7, isr8, isr9, isr10,
-        isr11, isr12, isr13, isr14, isr15, isr16, isr17, isr18, isr19, isr20,
+        isr11, isr12, isr13, isr_page_fault_stub, isr15, isr16, isr17, isr18, isr19, isr20,
         isr21, isr22, isr23, isr24, isr25, isr26, isr27, isr28, isr29, isr30, isr31,
         // PIC ISRs
         isr_timer_stub, isr33, isr34, isr35, isr36, isr37, isr38, isr39, isr40, isr41, isr42, isr43, isr44, isr45, isr46, isr47,
@@ -53,17 +59,25 @@ void idt_init(void) {
     );
 }
 
+uint32_t page_fault_handler(uint32_t *regs) {
+    uint32_t cr2;
+    asm volatile("mov %%cr2, %0": "=r"(cr2));
+    struct interrupt_frame *frame = (struct interrupt_frame*)((uint32_t)regs + 9);
+    if ((frame->cs & 0x3) == 3) {
+        proc *current = scheduler_get_current_proc();
+        if (current) {
+            LOG_WARN("segfault: pid=%x addr=%x\n", current->proc_id, cr2);
+            current->proc_state = ZOMBIE;
+            return scheduler_on_segfault(regs);
+        }
+    }
+    kernel_panicf("PAGE_FAULT: addr=%x ip=%x\n", cr2, frame->ip);
+    return 0;
+}
+
 void isr_handler(int num, struct interrupt_frame *frame) {
     if (num <= 32) {
-        //TODO: change to a switch when other ints are handled
-        if (num == INT_PAGE_FAULT) {
-            uint32_t cr2;
-            __asm__ volatile("mov %%cr2, %0" : "=r"(cr2));
-            SERIAL_PANIC("PAGE_FAULT: faulty address: %x\n> IP: %x", cr2, frame->ip);
-            kernel_panicf("PAGE_FAULT: faulty address: %x\n> IP: %x", cr2, frame->ip);
-        } else {
-            kernel_panic_isr(num, frame);
-        }
+        kernel_panic_isr(num, frame);
     } else {
         switch(num) {
             //PIC ints

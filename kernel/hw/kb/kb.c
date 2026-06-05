@@ -1,7 +1,7 @@
+#include <hw/io/io.h>
+#include <tty/tty.h>
+
 #include "kb.h"
-#include "hw/vga/vga.h"
-#include "hw/io/io.h"
-#include "tty/tty.h"
 
 static char kb_map[128] = {
   [KB_SC_PRESSED_ONE]   =  '1',

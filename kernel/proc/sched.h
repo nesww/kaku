@@ -1,5 +1,4 @@
-#ifndef SCHEDULING_H
-#define SCHEDULING_H
+#pragma once
 
 #include <stdint.h>
 
@@ -10,6 +9,5 @@
 void scheduler_init(void);
 void scheduler_add_proc(proc *p);
 uint32_t scheduler(uint32_t *regs);
-
-
-#endif //SCHEDULING_H
+proc *scheduler_get_current_proc(void);
+uint32_t scheduler_on_segfault(uint32_t *regs);
