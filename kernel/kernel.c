@@ -23,8 +23,8 @@
 // #include <stdint.h>
 
 #define KAKU_VER_MAJOR 0
-#define KAKU_VER_MINOR 0
-#define KAKU_VER_PATCH 5
+#define KAKU_VER_MINOR 1
+#define KAKU_VER_PATCH 0
 
 #define KAKU_ASCII \
 "         @@       @@@        \t    .-. .-')    ('-.    .-. .-')              \n"       \
@@ -66,9 +66,9 @@ static void __kernel_init(void) {
 static void __kernel_print_info() {
     tty_printf(
         "\n===========================================================\n"
-        "   kaku - v%d.%d.%d\n"
+        "   kaku - v%d.%d.%d\n\n"
         KAKU_ASCII
-        "===========================================================\n\n"
+        "\n===========================================================\n\n"
         , KAKU_VER_MAJOR, KAKU_VER_MINOR, KAKU_VER_PATCH);
     LOG_INFO("everything initiliazd, kernel running \n\n");
 }

@@ -1,8 +1,11 @@
-# kaku - kernel - v0.0.5
+# kaku - kernel - v0.1.0
 
 Basic bootloader & kernel (x86 32bit)
 
 <img src="./assets/kaku_name.png" alt="kaku_logo" width=250/>
+
+You can now execute flat binaries in userspace (see [user_fs](user_fs/)).
+Future basic syscalls will be implemented for a shell entry process.
  
 ***
  
@@ -25,8 +28,6 @@ Now:
 - [vfs.h](kernel/vfs/vfs.h): VFS interface to (with an ext2 driver)
 
 Coming:
-- Kernel internal logging system for infos & debugging, to be extracted from the VM (serial output for now)
-- Repair IOs (VGA & Serial, TTY to check) for weird race condition from processes (will be fixed when doing syscalls)
 - A basic shell interface with some programs built-in (in progress)
 - Syscalls interface for future userspace (in progress) 
 
