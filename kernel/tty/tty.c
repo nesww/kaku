@@ -22,6 +22,7 @@ static void __tty_flush_char(tty_char *tc, uint32_t px, uint32_t py);
 static void __tty_flush_line(uint32_t line);
 static void __tty_newline(void);
 static void __tty_scroll(void);
+static void __tty_flush_cell(uint32_t i);
 
 static void __tty_newline(void) {
     tty_cursor_x = 0;
@@ -59,6 +60,19 @@ void tty_putchar(char c) {
         if (tty_cursor_y >= VESA_HEIGHT / TTY_CHAR_HEIGHT)
             __tty_scroll();
     }
+}
+
+void tty_backspace(void) {
+    if (tty_cursor_x == 0) {
+        if (tty_cursor_y == 0) return;
+        tty_cursor_y--;
+        tty_cursor_x = (VESA_WIDTH / TTY_CHAR_WIDTH) - 1;
+    } else {
+        tty_cursor_x--;
+    }
+    uint32_t index = tty_cursor_y * (VESA_WIDTH / TTY_CHAR_WIDTH) + tty_cursor_x;
+    tty_backbuffer[index].c = 0;
+    __tty_flush_cell(index);
 }
 
 void tty_puts(const char *s) {

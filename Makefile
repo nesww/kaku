@@ -6,7 +6,7 @@ CFLAGS = -ffreestanding -nostdlib -mgeneral-regs-only -I/usr/lib/gcc/i686-elf/15
 LDFLAGS = -T kernel/kernel.ld --oformat binary -Map kernel/kernel.map
 
 KERNEL_SRCS = $(shell find kernel -mindepth 2 -name '*.c')
-KERNEL_BIN_DEPS = $(KERNEL_SRCS:.c=.o) kernel/hw/pit/pit_asm.o kernel/syscall/syscall_asm.o kernel/hw/idt/page_fault.o
+KERNEL_BIN_DEPS = $(KERNEL_SRCS:.c=.o) kernel/hw/pit/pit_asm.o kernel/syscall/syscall_asm.o kernel/hw/idt/page_fault.o kernel/proc/k_idle.o
 
 #for calculating automatically value for AL in bootloader/boot.asm for loading all sectors for the kernel
 KERNEL_SECTORS=$(shell expr $$(wc -c < kernel/kernel.bin) / 512 + 2)
@@ -40,6 +40,8 @@ kernel/syscall/syscall_asm.o: kernel/syscall/syscall_asm.asm
 kernel/hw/idt/page_fault.o: kernel/hw/idt/page_fault.asm
 	$(ASM) -f elf32 $< -o $@
 
+kernel/proc/k_idle.o: kernel/proc/k_idle.asm
+	$(ASM) -f elf32 $< -o $@
 #kernel internal & utils targets
 
 kernel/%.o: kernel/%.c
@@ -57,12 +59,7 @@ $(USER_FS)/bin/entry.bin: $(USER_FS)/src/entry.c $(USER_FS)/src/entry.ld
 	$(LD) -T $(USER_FS)/src/entry.ld -o $(USER_FS)/bin/entry.bin --oformat binary $(USER_FS)/src/entry.o
 	rm -rf $(USER_FS)/src/*.o
 
-$(USER_FS)/bin/proc2.bin: $(USER_FS)/src/proc2.c $(USER_FS)/src/proc2.ld
-	$(CC) -ffreestanding -nostdlib -o $(USER_FS)/src/proc2.o -c $(USER_FS)/src/proc2.c
-	$(LD) -T $(USER_FS)/src/proc2.ld -o $(USER_FS)/bin/proc2.bin --oformat binary $(USER_FS)/src/proc2.o
-	rm -rf $(USER_FS)/src/*.o
-
-fill-disk: $(BUILDS)/disk.img $(USER_FS)/bin/entry.bin $(USER_FS)/bin/proc2.bin
+fill-disk: $(BUILDS)/disk.img $(USER_FS)/bin/entry.bin
 	sudo mount -o loop,offset=$$((2048*512)) build/disk.img /mnt
 	sudo cp -r user_fs/* /mnt/
 	sudo umount /mnt

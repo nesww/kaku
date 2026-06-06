@@ -20,6 +20,7 @@ typedef struct {
 
 void tty_init(void);
 void tty_putchar(char c);
+void tty_backspace(void);
 void tty_puts(const char *s);
 void tty_printf(const char *s, ...);
 void tty_vprintf(const char *s, va_list args);

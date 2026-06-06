@@ -8,6 +8,7 @@ typedef struct {
     uint32_t size;
     uint8_t is_dir;
     void *fs_specific;
+    uint32_t vnode_id;
 } vfs_node;
 
 typedef struct {

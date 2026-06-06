@@ -10,4 +10,4 @@
 #define SYS_WRITE_FILE 0x6
 #define SYS_EXIT       0x7
 
-void syscall_handler(uint32_t *regs);
+uint32_t syscall_handler(uint32_t *regs);

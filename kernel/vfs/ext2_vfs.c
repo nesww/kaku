@@ -18,6 +18,7 @@ static vfs_node *__ext2_open(const char *path) {
     fs_ext2_inode *inode_copy = kmalloc(sizeof(fs_ext2_inode));
     *inode_copy = inode;
     node->fs_specific = inode_copy;
+    node->vnode_id = inode.inode_id;
     return node;
 }
 

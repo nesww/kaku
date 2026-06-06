@@ -2,6 +2,7 @@
 #include <tty/tty.h>
 
 #include "kb.h"
+#include <io/stdin.h>
 
 static char kb_map[128] = {
   [KB_SC_PRESSED_ONE]   =  '1',
@@ -87,15 +88,15 @@ void kb_handle_interrupt() {
     if (scancode >= 0x80) return;
 
     if (scancode == KB_SC_PRESSED_BACKSPACE) {
-        // vga_backspace();
-        tty_puts("backspace: not implemented\n");
+        // pop one char from stdin buffer
+        stdin_pop();
     } else if (scancode == KB_SC_PRESSED_ENTER) {
-        tty_putchar('\n');
+        stdin_flush();
     } else if (scancode == KB_SC_PRESSED_NOTHING) {
         return;
     } else {
+        //append char to stdin buffer
         char c = kb_map[scancode];
-        if (c != 0) tty_putchar(kb_map[scancode]);
+        if (c != 0) stdin_put(c);
     }
-    tty_flush_current_line();
 }

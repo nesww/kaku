@@ -1,5 +1,7 @@
 /*hardware related includes */
-#include "panic/panic.h"
+#include <fs/fd.h>
+#include <io/stdin.h>
+#include <panic/panic.h>
 #include <hw/idt/idt.h>
 #include <hw/pic/pic.h>
 #include <hw/pit/pit.h>
@@ -60,6 +62,9 @@ static void __kernel_init(void) {
     tss_init();
     tss_install();
     scheduler_init();
+    stdin_init();
+    fd_init_table();
+    proc_create_k_idle();
     INTERRUPTS_ENABLE();
 }
 
@@ -70,14 +75,14 @@ static void __kernel_print_info() {
         KAKU_ASCII
         "\n===========================================================\n\n"
         , KAKU_VER_MAJOR, KAKU_VER_MINOR, KAKU_VER_PATCH);
-    LOG_INFO("everything initiliazd, kernel running \n\n");
+    LOG_INFO("everything initiliazed, kernel running \n\n");
 }
 
-uint32_t __load_proc(const char *path, uint32_t addr) {
+uint8_t __load_proc(const char *path, uint32_t addr) {
     vfs_node *file = vfs_open(path);
     if (!file) {
         LOG_WARN("given path '%s': file not found\n", path);
-        return 0;
+        return FALSE;
     }
     proc *proc = proc_create((void(*)())addr);
     uint32_t frame = (uint32_t)fa_alloc();
@@ -86,29 +91,29 @@ uint32_t __load_proc(const char *path, uint32_t addr) {
     vfs_close(file);
     scheduler_add_proc(proc);
     LOG_INFO("loaded proc from %s at %x, pid=%d\n", path, addr, proc->proc_id);
-    return 1;
+    return TRUE;
 }
 
-void kernel_main(void) {
+static void __init(void) {
     serial_init();
     __hw_init();
     __kernel_init();
     tty_init();
     __kernel_print_info();
+}
+
+void kernel_main(void) {
+    __init();
 
     uint32_t entry_address = 0x400000;
-    uint32_t proc2_address = 0x500000;
 
     INTERRUPTS_DISABLE();
     uint32_t count = 0;
-    count+= __load_proc("/bin/entry.bin", entry_address);
-    //in normal context we wouldn't load and start another process but here its for fun :)
-    count+= __load_proc("/bin/proc2.bin", proc2_address);
+    uint8_t entry_running =__load_proc("/bin/entry.bin", entry_address);
     INTERRUPTS_ENABLE();
 
-    if (count == 0) {
-        kernel_panic("No entry process could be started!");
+    if (!entry_running) {
+        kernel_panic("Entry process could not be started!");
     }
-
     while(1);
 }
