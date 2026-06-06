@@ -1,11 +1,11 @@
-# kaku - kernel - v0.1.0
+# kaku - kernel - v0.1.1
 
 Basic bootloader & kernel (x86 32bit)
 
 <img src="./assets/kaku_name.png" alt="kaku_logo" width=250/>
 
 You can now execute flat binaries in userspace (see [user_fs](user_fs/)).
-Future basic syscalls will be implemented for a shell entry process.
+Shell entry process will come shortly after ELF executable will be available.
  
 ***
  
@@ -26,10 +26,11 @@ Now:
 - [vesa.h](kernel/hw/vesa/vesa.h): VESA 1024x768 display with 8 bits colors
 - [tty.h](kernel/tty/tty.h): basic TTY which can scroll, with a backbuffer
 - [vfs.h](kernel/vfs/vfs.h): VFS interface to (with an ext2 driver)
+- [syscall.h](kernel/syscall/syscall.h): syscall interface for userspace interaction
 
 Coming:
 - A basic shell interface with some programs built-in (in progress)
-- Syscalls interface for future userspace (in progress) 
+- Syscalls interface for future userspace (in progress) -> more syscalls
 
 See [Makefile](Makefile) to build the image and run it with QEMU.
 
