@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../sys/syscalls.h"
+#include <lib/stdio.h>
 
 #define TODO(str)                           \
     do {                                    \
         if (str)                            \
-            SYS_WRITE("TODO: " #str " not yet implemented\n"); \
+            print("TODO: " #str " not yet implemented\n"); \
     } while(0)

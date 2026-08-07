@@ -1,0 +1,122 @@
+#include <stdint.h>
+
+#define HW_IRQ_IPL
+#define HW_IO_IPL
+#define DEV_CONSOLE_IPL
+#define DEV_INPUT_IPL
+#define PROC_PROC_IPL
+#define PROC_SCHED_IPL
+
+#include <dev/mod.h>
+#include <hw/mod.h>
+#include <panic/mod.h>
+#include <log/mod.h>
+#include <proc/mod.h>
+#include <types.h>
+
+#include "idt.h"
+#include "idt_declare.h"
+
+static idt_entry idt[IDT_TAB_SIZE];
+
+
+static void __idt_set_entry(int num, void *isr_wrapper) {
+    idt_entry entry = {0};
+    entry.zero              = 0x0;
+    entry.segment_selector  = 0x08;
+    entry.type_attr         = 0x8E;
+    uint32_t addr           = (uint32_t)isr_wrapper;
+    entry.low_handler_addr  = (uint16_t)(addr & 0xffff);
+    entry.high_handler_addr = (uint16_t)(addr >> 16);
+
+    idt[num] = entry;
+}
+
+static void __idt_set_user_entry(int num, void *isr_wrapper) {
+    __idt_set_entry(num, isr_wrapper);
+    idt[num].type_attr = 0xEE;
+}
+
+void idt_init(void) {
+    void* handlers[] = {
+        // intel legacy ISRs
+        isr0, isr1, isr2, isr3, isr4, isr5, isr6, isr7, isr8, isr9, isr10,
+        isr11, isr12, isr13, isr_page_fault_stub, isr15, isr16, isr17, isr18, isr19, isr20,
+        isr21, isr22, isr23, isr24, isr25, isr26, isr27, isr28, isr29, isr30, isr31,
+        // PIC ISRs
+        isr_timer_stub, isr33, isr34, isr35, isr36, isr37, isr38, isr39, isr40, isr41, isr42, isr43, isr44, isr45, isr46, isr47,
+    };
+
+    for (int i = 0; i < 48; ++i) {
+        __idt_set_entry(i, handlers[i]);
+    }
+
+    __idt_set_user_entry(128, isr_syscall_stub);
+
+    // idt_descriptor desc;
+    // desc.limit = sizeof(idt) - 1;
+    // desc.base  = (uint32_t)idt;
+    uint8_t idt_ptr[6];
+    *(uint16_t *)idt_ptr = sizeof(idt) - 1;
+    *(uint32_t *)(idt_ptr + 2) = (uint32_t)idt;
+
+    __asm__ volatile(
+        "lidt %0" : : "m"(*idt_ptr)
+    );
+}
+
+void hw_idt_init(void) {
+    idt_init();
+}
+
+uint32_t page_fault_handler(uint32_t *regs) {
+    uint32_t cr2;
+    asm volatile("mov %%cr2, %0": "=r"(cr2));
+    struct interrupt_frame *frame = (struct interrupt_frame*)((uint32_t)regs + 8 * sizeof(uint32_t));
+    if ((frame->cs & 0x3) == 3) {
+        proc *current = scheduler_get_current_proc();
+        if (current) {
+            LOG_WARN("segfault: pid=%x addr=%x ip=%x\n", current->proc_id, cr2, frame->ip);
+            current->proc_state = ZOMBIE;
+            current->exit_code = 139;
+
+            scheduler_notify_parent(current);
+
+            return scheduler_on_segfault(regs);
+        }
+    }
+    // proc *current = scheduler_get_current_proc();
+    // LOG_INFO("PROC: %x, status: %s\n", current->proc_id, current->proc_state);
+    kernel_panicf("PAGE_FAULT: addr=%x ip=%x\n", cr2, frame->ip);
+    return 0;
+}
+
+void isr_handler(int num, struct interrupt_frame *frame) {
+    if (num < 32) {
+        kernel_panic_isr(num, frame);
+    } else {
+        switch(num) {
+            //PIC ints
+            // PIC master IRQs
+            case INT_PIC_TIMER:          /*vga_print("INT_PIC: timer");*/              break;
+            case INT_PIC_KEYBOARD:
+                kb_handle_interrupt();
+                break;
+            case INT_PIC_SERIAL_COM2:       /* serial_printf("INT_PIC: serial COM2\n");*/         break;
+            case INT_PIC_SERIAL_COM1:       /* serial_printf("INT_PIC: serial COM1\n");*/         break;
+            case INT_PIC_PARALLEL_PORT:     /* serial_printf("INT_PIC: parallel port\n");*/       break;
+            case INT_PIC_FLOPPY:            /* serial_printf("INT_PIC: floppy\n");*/              break;
+            case INT_PIC_PARALLEL_PORT2:    /* serial_printf("INT_PIC: parallel port 2\n");*/     break;
+            // PIC slave IRQs
+            case INT_PIC_REALTIME_CLOCK:    /* serial_printf("INT_PIC: realtime clock\n");   */   break;
+            case INT_PIC_PS2:               /* serial_printf("INT_PIC: PS/2\n");             */   break;
+            case INT_PIC_FLOAT_COPROCESSOR: /* serial_printf("INT_PIC: float coprocessor\n");*/   break;
+            case INT_PIC_ATA_PRIMARY:       /* serial_printf("INT_PIC: ATA primary disk\n"); */   break;
+            case INT_PIC_ATA_SECONDARY:     /* serial_printf("INT_PIC: ATA secondary disk\n")*/;  break;
+            default:
+                tty_printf("INT_PIC: unknown exception or not handled: %d\n", num);
+                break;
+        }
+        pic_sendEOI(num - PIC_INT_OFFSET);
+    }
+}

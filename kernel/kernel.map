@@ -1,0 +1,393 @@
+
+There are no discarded input sections
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+                0xc0010000                        . = 0xc0010000
+
+.text           0xc0010000     0xb637 load address 0x00010000
+ *(.text)
+ .text          0xc0010000     0x2000 obj/kernel/kernel_entry.o
+                0xc0010000                kernel_entry
+ .text          0xc0012000     0x12a6 obj/kernel/syscall/src/syscall.o
+                0xc0012f51                syscall_handler
+ .text          0xc00132a6        0x0 obj/kernel/tty/src/fonts/default8x16.o
+ .text          0xc00132a6      0x8a2 obj/kernel/tty/src/tty.o
+                0xc0013620                tty_init
+                0xc0013661                tty_putchar
+                0xc001372a                tty_backspace
+                0xc00137a3                tty_puts
+                0xc00137d4                tty_printf
+                0xc00137fc                tty_vprintf
+                0xc00139c7                tty_flush
+                0xc00139f5                tty_flush_current_line
+                0xc0013a24                tty_get_cursor_y
+                0xc0013a2e                tty_flush_from
+                0xc0013aea                tty_clear
+                0xc0013b2c                tty_set_fg
+                0xc0013b3a                tty_set_bg
+ .text          0xc0013b48      0x244 obj/kernel/tty/src/stdin.o
+                0xc0013bc2                stdin_init
+                0xc0013be0                stdin_wait
+                0xc0013c01                stdin_put
+                0xc0013c79                stdin_pop
+                0xc0013cc0                stdin_flush
+ .text          0xc0013d8c      0x9c3 obj/kernel/proc/src/proc.o
+                0xc001402d                proc_get_idle
+                0xc0014037                proc_create
+                0xc00141a9                proc_create_k_idle
+                0xc001426d                proc_destroy
+                0xc0014459                proc_alloc_fd
+                0xc001451f                proc_fd_read_file
+                0xc00145f9                proc_fd_write_file
+                0xc00146c5                proc_close_fd
+ .text          0xc001474f      0x290 obj/kernel/proc/src/tss.o
+                0xc0014856                tss_init
+                0xc0014880                tss_install
+                0xc00149d1                tss_set_kernel_stack
+ .text          0xc00149df      0xb2a obj/kernel/proc/src/sched.o
+                0xc0014db0                scheduler_init
+                0xc001523d                scheduler
+                0xc0015266                scheduler_yield
+                0xc001527c                scheduler_add_proc
+                0xc00152bc                scheduler_get_proc
+                0xc001530c                scheduler_get_current_proc
+                0xc0015316                scheduler_on_segfault
+                0xc00153f4                scheduler_wake_stdin
+                0xc0015420                scheduler_notify_parent
+                0xc001547e                scheduler_reap_child
+ .text          0xc0015509      0x35d obj/kernel/kernel.o
+                0xc001582c                kernel_main
+ .text          0xc0015866       0xec obj/kernel/fs/src/vfs.o
+                0xc0015866                vfs_register_driver
+                0xc0015874                vfs_open
+                0xc001589e                vfs_list
+                0xc00158c9                vfs_read
+                0xc00158fa                vfs_write
+                0xc001592b                vfs_close
+ .text          0xc0015952      0x207 obj/kernel/fs/src/ext2_vfs.o
+                0xc0015b4f                vfs_get_ext2_driver
+ .text          0xc0015b59      0x37a obj/kernel/fs/src/fd.o
+                0xc0015d19                fd_init_table
+                0xc0015d37                fd_new
+                0xc0015d8a                fd_add
+                0xc0015dfe                fd_get
+                0xc0015e14                fd_find_by_node
+                0xc0015e72                fd_remove
+ .text          0xc0015ed3     0x1e81 obj/kernel/fs/src/ext2.o
+                0xc0016553                fs_ext2_read_superblock
+                0xc00166cb                fs_ext2_get_superblock
+                0xc00166d5                fs_ext2_read_bgdt
+                0xc001678f                fs_ext2_get_bgdt
+                0xc00167de                fs_ext2_read_inode
+                0xc0016951                fs_ext2_write_inode
+                0xc0016cff                fs_ext2_list_dir
+                0xc0016edf                __fs_ext2_find_in_dir
+                0xc0016f88                fs_ext2_resolve_path
+                0xc0017147                fs_ext2_read_file_contents
+                0xc00172a4                __fs_ext2_write_bgdt_to_disk
+                0xc00172f6                __fs_ext2_write_sb_base_to_disk
+                0xc00173bf                fs_ext2_alloc_block
+                0xc0017607                fs_ext2_alloc_inode
+                0xc0017855                fs_ext2_write_file
+                0xc00179f8                fs_ext2_create_file
+ .text          0xc0017d54       0xbe obj/kernel/hw/src/pit.o
+                0xc0017d9b                pit_init
+                0xc0017dc8                hw_timer_init
+ .text          0xc0017e12      0xc69 obj/kernel/hw/src/idt.o
+                0xc0017f84                isr0
+                0xc0017fb1                isr1
+                0xc0017fde                isr2
+                0xc001800b                isr3
+                0xc0018038                isr4
+                0xc0018065                isr5
+                0xc0018092                isr6
+                0xc00180bf                isr7
+                0xc00180ec                isr8
+                0xc0018123                isr9
+                0xc0018150                isr10
+                0xc0018187                isr11
+                0xc00181be                isr12
+                0xc00181f5                isr13
+                0xc001822c                isr15
+                0xc0018259                isr16
+                0xc0018286                isr17
+                0xc00182b3                isr18
+                0xc00182e0                isr19
+                0xc001830d                isr20
+                0xc001833a                isr21
+                0xc0018367                isr22
+                0xc0018394                isr23
+                0xc00183c1                isr24
+                0xc00183ee                isr25
+                0xc001841b                isr26
+                0xc0018448                isr27
+                0xc0018475                isr28
+                0xc00184a2                isr29
+                0xc00184cf                isr30
+                0xc00184fc                isr31
+                0xc0018529                isr33
+                0xc0018556                isr34
+                0xc0018583                isr35
+                0xc00185b0                isr36
+                0xc00185dd                isr37
+                0xc001860a                isr38
+                0xc0018637                isr39
+                0xc0018664                isr40
+                0xc0018691                isr41
+                0xc00186be                isr42
+                0xc00186eb                isr43
+                0xc0018718                isr44
+                0xc0018745                isr45
+                0xc0018772                isr46
+                0xc001879f                isr47
+                0xc001883e                idt_init
+                0xc00188c8                hw_idt_init
+                0xc00188d3                page_fault_handler
+                0xc0018972                isr_handler
+ .text          0xc0018a7b      0x688 obj/kernel/elf/src/elf.o
+                0xc0018b9e                elf_load
+ .text          0xc0019103      0x3b1 obj/kernel/log/src/log.o
+                0xc0019413                log_register_sink
+                0xc0019436                log_unregister_sink
+                0xc001943c                log_write
+                0xc001945d                log_vwrite
+ .text          0xc00194b4      0x5c2 obj/kernel/dev/src/ata.o
+                0xc00195b9                ata_wait_bsy
+                0xc0019609                ata_wait_drq
+                0xc001965f                ata_get_error
+                0xc0019671                ata_identify
+                0xc0019734                ata_read
+                0xc00198b8                ata_write
+ .text          0xc0019a76       0xa0 obj/kernel/dev/src/kb.o
+                0xc0019aaf                kb_handle_interrupt
+ .text          0xc0019b16      0x58d obj/kernel/dev/src/serial.o
+                0xc0019f4a                serial_init
+                0xc0019fca                serial_putchar
+                0xc001a04a                serial_printf
+                0xc001a072                serial_puts
+ .text          0xc001a0a3      0x758 obj/kernel/dev/src/vga.o
+                0xc001a3f5                vga_enable_cursor
+                0xc001a437                vga_clear
+                0xc001a483                vga_cclear
+                0xc001a535                vga_print
+                0xc001a57c                vga_println
+                0xc001a598                vga_putchar
+                0xc001a5eb                vga_putint
+                0xc001a652                vga_puthex
+                0xc001a6b4                vga_puthex32
+                0xc001a727                vga_printf
+                0xc001a750                vga_vprintf
+                0xc001a771                vga_backspace
+                0xc001a7a9                vga_setforeground_color
+                0xc001a7d2                vga_setbackground_color
+ .text          0xc001a7fb      0x149 obj/kernel/dev/src/vesa.o
+                0xc001a82d                vesa_init
+                0xc001a8a3                vesa_clear
+                0xc001a903                vesa_set_pixel
+                0xc001a92e                vesa_get_fb
+                0xc001a938                vesa_get_pitch
+ .text          0xc001a944      0x426 obj/kernel/mm/src/heap.o
+                0xc001aa4b                kheap_init
+                0xc001ab04                __order_for_size
+                0xc001ab2c                __size_for_order
+                0xc001ab49                kheap_alloc
+                0xc001ac5a                kheap_free
+                0xc001ad56                kheap_get_start
+                0xc001ad60                kheap_get_size
+ .text          0xc001ad6a       0xf7 obj/kernel/mm/src/mem.o
+                0xc001ad74                mmap_get_usable_entry
+ .text          0xc001ae61      0x334 obj/kernel/mm/src/paging.o
+                0xc001af68                paging_kernel_init
+                0xc001b02a                paging_get_kernel_pd
+                0xc001b052                paging_map
+                0xc001b0e0                paging_create_pd
+                0xc001b166                paging_switch
+ .text          0xc001b195      0x447 obj/kernel/mm/src/frame.o
+                0xc001b2d2                __fa_init_alloc_bitmap
+                0xc001b38c                fa_init
+                0xc001b466                fa_alloc
+                0xc001b565                fa_free
+ *fill*         0xc001b5dc        0x4 
+ .text          0xc001b5e0       0x14 obj/kernel/syscall/src/syscall_asm.o
+                0xc001b5e0                isr_syscall_stub
+ *fill*         0xc001b5f4        0xc 
+ .text          0xc001b600        0x4 obj/kernel/proc/src/k_idle.o
+                0xc001b600                idle_entry
+ *fill*         0xc001b604        0xc 
+ .text          0xc001b610        0xe obj/kernel/hw/src/pit_asm.o
+                0xc001b610                isr_timer_stub
+ *fill*         0xc001b61e        0x2 
+ .text          0xc001b620       0x17 obj/kernel/hw/src/page_fault.o
+                0xc001b620                isr_page_fault_stub
+
+.rodata         0xc001b640     0x390b load address 0x0001b640
+ *(.rodata)
+ .rodata        0xc001b640      0x6d0 obj/kernel/syscall/src/syscall.o
+ .rodata        0xc001bd10       0x3f obj/kernel/tty/src/tty.o
+ *fill*         0xc001bd4f        0x1 
+ .rodata        0xc001bd50       0xfc obj/kernel/tty/src/stdin.o
+ .rodata        0xc001be4c      0x46e obj/kernel/proc/src/proc.o
+ *fill*         0xc001c2ba        0x2 
+ .rodata        0xc001c2bc      0x303 obj/kernel/proc/src/tss.o
+ *fill*         0xc001c5bf        0x1 
+ .rodata        0xc001c5c0      0x3a0 obj/kernel/proc/src/sched.o
+ .rodata        0xc001c960      0x6fc obj/kernel/kernel.o
+ *fill*         0xc001d05c        0x4 
+ .rodata        0xc001d060      0x9b0 obj/kernel/fs/src/ext2.o
+ *fill*         0xc001da10       0x10 
+ .rodata        0xc001da20      0x3f3 obj/kernel/hw/src/idt.o
+ *fill*         0xc001de13        0x1 
+ .rodata        0xc001de14      0x149 obj/kernel/elf/src/elf.o
+ *fill*         0xc001df5d        0x3 
+ .rodata        0xc001df60      0x196 obj/kernel/dev/src/ata.o
+ *fill*         0xc001e0f6        0x2 
+ .rodata        0xc001e0f8      0x306 obj/kernel/dev/src/serial.o
+ .rodata        0xc001e3fe        0x3 obj/kernel/dev/src/vga.o
+ *fill*         0xc001e401        0x3 
+ .rodata        0xc001e404      0x34f obj/kernel/mm/src/heap.o
+ *fill*         0xc001e753        0x1 
+ .rodata        0xc001e754      0x436 obj/kernel/mm/src/paging.o
+ *fill*         0xc001eb8a        0x2 
+ .rodata        0xc001eb8c      0x3bf obj/kernel/mm/src/frame.o
+
+.data           0xc001ef60     0x14c5 load address 0x0001ef60
+ *(.data)
+ .data          0xc001ef60        0x0 obj/kernel/syscall/src/syscall.o
+ .data          0xc001ef60     0x1424 obj/kernel/tty/src/fonts/default8x16.o
+                0xc001ef60                default8x16_psf
+                0xc0020380                default8x16_psf_len
+ .data          0xc0020384        0x4 obj/kernel/tty/src/tty.o
+ .data          0xc0020388        0x0 obj/kernel/tty/src/stdin.o
+ .data          0xc0020388        0x0 obj/kernel/proc/src/proc.o
+ .data          0xc0020388        0x0 obj/kernel/proc/src/tss.o
+ .data          0xc0020388        0x0 obj/kernel/proc/src/sched.o
+ .data          0xc0020388        0x0 obj/kernel/kernel.o
+ .data          0xc0020388        0x0 obj/kernel/fs/src/vfs.o
+ .data          0xc0020388       0x14 obj/kernel/fs/src/ext2_vfs.o
+ .data          0xc002039c        0x0 obj/kernel/fs/src/fd.o
+ .data          0xc002039c        0x0 obj/kernel/fs/src/ext2.o
+ .data          0xc002039c        0x0 obj/kernel/hw/src/pit.o
+ .data          0xc002039c        0x0 obj/kernel/hw/src/idt.o
+ .data          0xc002039c        0x0 obj/kernel/elf/src/elf.o
+ .data          0xc002039c        0x0 obj/kernel/log/src/log.o
+ .data          0xc002039c        0x0 obj/kernel/dev/src/ata.o
+ *fill*         0xc002039c        0x4 
+ .data          0xc00203a0       0x80 obj/kernel/dev/src/kb.o
+ .data          0xc0020420        0x0 obj/kernel/dev/src/serial.o
+ .data          0xc0020420        0x5 obj/kernel/dev/src/vga.o
+ .data          0xc0020425        0x0 obj/kernel/dev/src/vesa.o
+ .data          0xc0020425        0x0 obj/kernel/mm/src/heap.o
+ .data          0xc0020425        0x0 obj/kernel/mm/src/mem.o
+ .data          0xc0020425        0x0 obj/kernel/mm/src/paging.o
+ .data          0xc0020425        0x0 obj/kernel/mm/src/frame.o
+
+.bss            0xc0020440    0x13af0 load address 0x00020440
+ *(.bss)
+ .bss           0xc0020440        0x0 obj/kernel/syscall/src/syscall.o
+ .bss           0xc0020440        0x0 obj/kernel/tty/src/fonts/default8x16.o
+ .bss           0xc0020440    0x1202c obj/kernel/tty/src/tty.o
+ .bss           0xc003246c       0x20 obj/kernel/tty/src/stdin.o
+ .bss           0xc003248c        0x8 obj/kernel/proc/src/proc.o
+ *fill*         0xc0032494        0xc 
+ .bss           0xc00324a0       0x69 obj/kernel/proc/src/tss.o
+ *fill*         0xc0032509        0x3 
+ .bss           0xc003250c        0xd obj/kernel/proc/src/sched.o
+                0xc003250c                procs
+                0xc0032510                procs_head
+                0xc0032514                current_proc
+                0xc0032518                sched_initialzed
+ *fill*         0xc0032519        0x3 
+ .bss           0xc003251c        0xc obj/kernel/kernel.o
+ .bss           0xc0032528        0x4 obj/kernel/fs/src/vfs.o
+ .bss           0xc003252c        0x0 obj/kernel/fs/src/ext2_vfs.o
+ .bss           0xc003252c        0x4 obj/kernel/fs/src/fd.o
+ *fill*         0xc0032530       0x10 
+ .bss           0xc0032540      0x104 obj/kernel/fs/src/ext2.o
+ .bss           0xc0032644        0x0 obj/kernel/hw/src/pit.o
+ *fill*         0xc0032644       0x1c 
+ .bss           0xc0032660      0x800 obj/kernel/hw/src/idt.o
+ .bss           0xc0032e60        0x0 obj/kernel/elf/src/elf.o
+ .bss           0xc0032e60       0x21 obj/kernel/log/src/log.o
+ .bss           0xc0032e81        0x0 obj/kernel/dev/src/ata.o
+ .bss           0xc0032e81        0x0 obj/kernel/dev/src/kb.o
+ *fill*         0xc0032e81        0x3 
+ .bss           0xc0032e84       0x10 obj/kernel/dev/src/serial.o
+                0xc0032e84                serial_initialized
+ .bss           0xc0032e94       0x10 obj/kernel/dev/src/vga.o
+ .bss           0xc0032ea4        0x6 obj/kernel/dev/src/vesa.o
+ *fill*         0xc0032eaa       0x16 
+ .bss           0xc0032ec0       0x55 obj/kernel/mm/src/heap.o
+ .bss           0xc0032f15        0x0 obj/kernel/mm/src/mem.o
+ *fill*         0xc0032f15        0x3 
+ .bss           0xc0032f18        0x5 obj/kernel/mm/src/paging.o
+ *fill*         0xc0032f1d        0x3 
+ .bss           0xc0032f20        0x9 obj/kernel/mm/src/frame.o
+ *fill*         0xc0032f29        0x7 
+ .bss           0xc0032f30     0x1000 obj/kernel/proc/src/k_idle.o
+                0xc0033f30                idle_stack_top
+                0xc0033f30                        kernel_end = .
+                0x00033f30                        kernel_phys_end = (. - 0xc0000000)
+LOAD obj/kernel/kernel_entry.o
+LOAD obj/kernel/syscall/src/syscall.o
+LOAD obj/kernel/tty/src/fonts/default8x16.o
+LOAD obj/kernel/tty/src/tty.o
+LOAD obj/kernel/tty/src/stdin.o
+LOAD obj/kernel/proc/src/proc.o
+LOAD obj/kernel/proc/src/tss.o
+LOAD obj/kernel/proc/src/sched.o
+LOAD obj/kernel/kernel.o
+LOAD obj/kernel/fs/src/vfs.o
+LOAD obj/kernel/fs/src/ext2_vfs.o
+LOAD obj/kernel/fs/src/fd.o
+LOAD obj/kernel/fs/src/ext2.o
+LOAD obj/kernel/hw/src/pit.o
+LOAD obj/kernel/hw/src/idt.o
+LOAD obj/kernel/elf/src/elf.o
+LOAD obj/kernel/log/src/log.o
+LOAD obj/kernel/dev/src/ata.o
+LOAD obj/kernel/dev/src/kb.o
+LOAD obj/kernel/dev/src/serial.o
+LOAD obj/kernel/dev/src/vga.o
+LOAD obj/kernel/dev/src/vesa.o
+LOAD obj/kernel/mm/src/heap.o
+LOAD obj/kernel/mm/src/mem.o
+LOAD obj/kernel/mm/src/paging.o
+LOAD obj/kernel/mm/src/frame.o
+LOAD obj/kernel/syscall/src/syscall_asm.o
+LOAD obj/kernel/proc/src/k_idle.o
+LOAD obj/kernel/hw/src/pit_asm.o
+LOAD obj/kernel/hw/src/page_fault.o
+OUTPUT(kernel/kernel.bin binary)
+
+.comment        0x00000000      0x1db
+ .comment       0x00000000       0x13 obj/kernel/syscall/src/syscall.o
+ .comment       0x00000013       0x13 obj/kernel/tty/src/fonts/default8x16.o
+ .comment       0x00000026       0x13 obj/kernel/tty/src/tty.o
+ .comment       0x00000039       0x13 obj/kernel/tty/src/stdin.o
+ .comment       0x0000004c       0x13 obj/kernel/proc/src/proc.o
+ .comment       0x0000005f       0x13 obj/kernel/proc/src/tss.o
+ .comment       0x00000072       0x13 obj/kernel/proc/src/sched.o
+ .comment       0x00000085       0x13 obj/kernel/kernel.o
+ .comment       0x00000098       0x13 obj/kernel/fs/src/vfs.o
+ .comment       0x000000ab       0x13 obj/kernel/fs/src/ext2_vfs.o
+ .comment       0x000000be       0x13 obj/kernel/fs/src/fd.o
+ .comment       0x000000d1       0x13 obj/kernel/fs/src/ext2.o
+ .comment       0x000000e4       0x13 obj/kernel/hw/src/pit.o
+ .comment       0x000000f7       0x13 obj/kernel/hw/src/idt.o
+ .comment       0x0000010a       0x13 obj/kernel/elf/src/elf.o
+ .comment       0x0000011d       0x13 obj/kernel/log/src/log.o
+ .comment       0x00000130       0x13 obj/kernel/dev/src/ata.o
+ .comment       0x00000143       0x13 obj/kernel/dev/src/kb.o
+ .comment       0x00000156       0x13 obj/kernel/dev/src/serial.o
+ .comment       0x00000169       0x13 obj/kernel/dev/src/vga.o
+ .comment       0x0000017c       0x13 obj/kernel/dev/src/vesa.o
+ .comment       0x0000018f       0x13 obj/kernel/mm/src/heap.o
+ .comment       0x000001a2       0x13 obj/kernel/mm/src/mem.o
+ .comment       0x000001b5       0x13 obj/kernel/mm/src/paging.o
+ .comment       0x000001c8       0x13 obj/kernel/mm/src/frame.o

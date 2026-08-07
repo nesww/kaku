@@ -2,3 +2,5 @@
 **/*.img
 **/*.o
 .ignore
+docs
+tags

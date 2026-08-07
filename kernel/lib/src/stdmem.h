@@ -1,0 +1,31 @@
+#pragma once
+
+#define MM_HEAP_IPL
+#include <mm/mod.h>
+
+static inline void *kmemcpy(void *dst, const void *src, uint32_t n) {
+    uint8_t *d = (uint8_t*)dst;
+    const uint8_t *s = (const uint8_t*)src;
+    while (n--) *d++ = *s++;
+    return dst;
+}
+
+static inline void kmemset(void *dst, uint8_t val, uint32_t n) {
+    uint8_t *d = (uint8_t*)dst;
+    while (n--) *d++ = val;
+}
+
+static inline void *kmalloc(uint32_t size) {
+    return mm_alloc(size);
+}
+
+static inline void kfree(void* ptr) {
+    return mm_free(ptr);
+}
+
+static inline void *krealloc(void* ptr, uint32_t old_size, uint32_t new_size) {
+    void *new_ptr = kmalloc(new_size);
+    kmemcpy(new_ptr, ptr, old_size);
+    kfree(ptr);
+    return new_ptr;
+}

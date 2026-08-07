@@ -22,23 +22,53 @@ section .text
   call enter_pm
   hlt
 
-; load kernel code from the disk
+; load kernel code from the disk via EDD/LBA (handles kernels > 128 sectors)
 disk_load:
-    mov ah, 0x02
-    mov al, KERNEL_SECTORS ; see Makefile for KERNEL_SECTORS
-    mov ch, 0
-    mov cl, 2
-    mov dh, 0
+    mov word [disk_packet + 4], 0      ; dest offset = 0
+    mov word [disk_packet + 6], 0x1000 ; dest segment (0x1000:0x0000 = 0x10000)
+    mov dword [disk_packet + 8], 1     ; start LBA = 1 (kernel at LBA sector 1)
+    mov ax, KERNEL_SECTORS
+    mov [remaining], ax
+.load_loop:
+    mov ax, [remaining]
+    test ax, ax
+    jz .done
+    mov cx, 64
+    cmp ax, cx
+    jbe .set_chunk
+    mov ax, cx
+.set_chunk:
+    mov [disk_packet + 2], ax          ; sectors to read this chunk
+    mov si, disk_packet
+    mov ah, 0x42
     mov dl, [boot_drive]
-    mov bx, 0x1000
-    mov es, bx
-    xor bx, bx
     int 0x13
     jc disk_error
+
+    mov cx, [remaining]
+    sub cx, ax
+    mov [remaining], cx
+    add [disk_packet + 8], ax          ; LBA += chunk
+    mov ax, [disk_packet + 2]
+    shl ax, 5                          ; chunk * 32
+    add [disk_packet + 6], ax          ; dest segment += chunk*32
+    jmp .load_loop
+.done:
     ret
 
 disk_error:
     hlt
+
+disk_packet:
+    db 0x10        ; packet size
+    db 0           ; reserved
+    dw 0           ; sectors to read
+    dw 0           ; dest offset
+    dw 0x1000      ; dest segment
+    dq 1           ; start LBA
+
+remaining:
+    dw 0
 
 memory_map:
     ;counter for memory map entries
